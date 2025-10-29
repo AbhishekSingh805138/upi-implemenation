@@ -35,6 +35,10 @@ eureka:
     lease-renewal-interval-in-seconds: 30
     lease-expiration-duration-in-seconds: 90
 
+# User Service Configuration
+user-service:
+  base-url: http://user-service
+
 logging:
   level:
     com.upi.account: DEBUG

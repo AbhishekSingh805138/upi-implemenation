@@ -5,9 +5,12 @@ com\upi\account\dto\ErrorResponse.class
 com\upi\account\dto\BalanceUpdateRequest.class
 com\upi\account\dto\AccountResponse.class
 com\upi\account\entity\Account.class
+com\upi\account\config\RestTemplateConfig.class
+com\upi\account\client\UserServiceClient$UserDetails.class
 com\upi\account\dto\BalanceResponse.class
 com\upi\account\exception\AccountNotFoundException.class
 com\upi\account\AccountServiceApplication.class
+com\upi\account\client\UserServiceClient.class
 com\upi\account\dto\CreateAccountRequest.class
 com\upi\account\exception\GlobalExceptionHandler.class
 com\upi\account\repository\AccountRepository.class
