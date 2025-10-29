@@ -1,0 +1,55 @@
+<div class="app-container">
+  <!-- Navigation Header -->
+  <mat-toolbar color="primary" *ngIf="showNavigation">
+    <span>{{ title }}</span>
+    
+    <span class="spacer"></span>
+    
+    <!-- User Info -->
+    <span *ngIf="currentUser" class="user-info">
+      Welcome, {{ currentUser.fullName }}
+    </span>
+    
+    <!-- Account Balance -->
+    <span *ngIf="currentAccount" class="balance-info">
+      Balance: ₹{{ currentAccount.balance | number:'1.2-2' }}
+    </span>
+    
+    <!-- Navigation Menu -->
+    <button mat-button (click)="navigateTo('/dashboard')">
+      <mat-icon>dashboard</mat-icon>
+      Dashboard
+    </button>
+    
+    <button mat-button (click)="navigateTo('/transfer')">
+      <mat-icon>send</mat-icon>
+      Transfer
+    </button>
+    
+    <button mat-button (click)="navigateTo('/history')">
+      <mat-icon>history</mat-icon>
+      History
+    </button>
+    
+    <button mat-button [matMenuTriggerFor]="userMenu">
+      <mat-icon>account_circle</mat-icon>
+      <mat-icon>arrow_drop_down</mat-icon>
+    </button>
+    
+    <mat-menu #userMenu="matMenu">
+      <button mat-menu-item (click)="navigateTo('/profile')">
+        <mat-icon>person</mat-icon>
+        Profile
+      </button>
+      <button mat-menu-item (click)="logout()">
+        <mat-icon>logout</mat-icon>
+        Logout
+      </button>
+    </mat-menu>
+  </mat-toolbar>
+
+  <!-- Main Content -->
+  <div class="main-content" [class.with-nav]="showNavigation">
+    <router-outlet></router-outlet>
+  </div>
+</div>

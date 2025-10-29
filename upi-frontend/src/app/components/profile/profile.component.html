@@ -1,0 +1,257 @@
+<div class="profile-container">
+  <!-- Profile Header -->
+  <mat-card class="profile-header">
+    <mat-card-content>
+      <div class="user-avatar">
+        <mat-icon>account_circle</mat-icon>
+      </div>
+      <div class="user-info">
+        <h2>{{ currentUser?.fullName }}</h2>
+        <p>{{ currentUser?.username }}</p>
+        <p class="join-date">Member since {{ currentUser?.createdAt | date:'MMM yyyy' }}</p>
+      </div>
+    </mat-card-content>
+  </mat-card>
+
+  <!-- Profile Tabs -->
+  <mat-tab-group>
+    <!-- Personal Information Tab -->
+    <mat-tab label="Personal Information">
+      <mat-card class="tab-content">
+        <mat-card-header>
+          <mat-card-title>Personal Information</mat-card-title>
+          <mat-card-subtitle>Manage your personal details</mat-card-subtitle>
+        </mat-card-header>
+        
+        <mat-card-content>
+          <form [formGroup]="profileForm" (ngSubmit)="onSubmit()">
+            <div class="form-grid">
+              <mat-form-field appearance="outline">
+                <mat-label>Full Name</mat-label>
+                <input matInput 
+                       formControlName="fullName" 
+                       [readonly]="!isEditing"
+                       [class.readonly]="!isEditing">
+                <mat-icon matSuffix>person</mat-icon>
+                <mat-error *ngIf="profileForm.get('fullName')?.invalid && profileForm.get('fullName')?.touched">
+                  {{ getErrorMessage('fullName') }}
+                </mat-error>
+              </mat-form-field>
+
+              <mat-form-field appearance="outline">
+                <mat-label>Username</mat-label>
+                <input matInput 
+                       [value]="currentUser?.username" 
+                       readonly
+                       class="readonly">
+                <mat-icon matSuffix>badge</mat-icon>
+                <mat-hint>Username cannot be changed</mat-hint>
+              </mat-form-field>
+
+              <mat-form-field appearance="outline">
+                <mat-label>Email</mat-label>
+                <input matInput 
+                       type="email"
+                       formControlName="email" 
+                       [readonly]="!isEditing"
+                       [class.readonly]="!isEditing">
+                <mat-icon matSuffix>email</mat-icon>
+                <mat-error *ngIf="profileForm.get('email')?.invalid && profileForm.get('email')?.touched">
+                  {{ getErrorMessage('email') }}
+                </mat-error>
+              </mat-form-field>
+
+              <mat-form-field appearance="outline">
+                <mat-label>Phone</mat-label>
+                <input matInput 
+                       type="tel"
+                       formControlName="phone" 
+                       [readonly]="!isEditing"
+                       [class.readonly]="!isEditing">
+                <mat-icon matSuffix>phone</mat-icon>
+                <mat-error *ngIf="profileForm.get('phone')?.invalid && profileForm.get('phone')?.touched">
+                  {{ getErrorMessage('phone') }}
+                </mat-error>
+              </mat-form-field>
+            </div>
+          </form>
+        </mat-card-content>
+        
+        <mat-card-actions>
+          <div *ngIf="!isEditing" class="action-buttons">
+            <button mat-raised-button color="primary" (click)="toggleEdit()">
+              <mat-icon>edit</mat-icon>
+              Edit Profile
+            </button>
+          </div>
+          
+          <div *ngIf="isEditing" class="action-buttons">
+            <button mat-raised-button 
+                    color="primary" 
+                    (click)="onSubmit()" 
+                    [disabled]="profileForm.invalid || isLoading">
+              <mat-spinner *ngIf="isLoading" diameter="20"></mat-spinner>
+              <mat-icon *ngIf="!isLoading">save</mat-icon>
+              <span *ngIf="!isLoading">Save Changes</span>
+            </button>
+            <button mat-button (click)="toggleEdit()">
+              <mat-icon>cancel</mat-icon>
+              Cancel
+            </button>
+          </div>
+        </mat-card-actions>
+      </mat-card>
+    </mat-tab>
+
+    <!-- Account Information Tab -->
+    <mat-tab label="Account Information">
+      <mat-card class="tab-content">
+        <mat-card-header>
+          <mat-card-title>Account Information</mat-card-title>
+          <mat-card-subtitle>Your UPI account details</mat-card-subtitle>
+        </mat-card-header>
+        
+        <mat-card-content>
+          <mat-list>
+            <mat-list-item>
+              <mat-icon matListItemIcon>account_balance_wallet</mat-icon>
+              <div matListItemTitle>Current Balance</div>
+              <div matListItemLine class="balance-amount">
+                ₹{{ currentAccount?.balance | number:'1.2-2' }}
+              </div>
+              <button mat-icon-button matListItemMeta (click)="refreshBalance()">
+                <mat-icon>refresh</mat-icon>
+              </button>
+            </mat-list-item>
+            
+            <mat-divider></mat-divider>
+            
+            <mat-list-item>
+              <mat-icon matListItemIcon>credit_card</mat-icon>
+              <div matListItemTitle>UPI ID</div>
+              <div matListItemLine class="upi-id">{{ currentAccount?.upiId }}</div>
+              <button mat-icon-button matListItemMeta (click)="copyUpiId()">
+                <mat-icon>content_copy</mat-icon>
+              </button>
+            </mat-list-item>
+            
+            <mat-divider></mat-divider>
+            
+            <mat-list-item>
+              <mat-icon matListItemIcon>account_balance</mat-icon>
+              <div matListItemTitle>Account Number</div>
+              <div matListItemLine class="account-number">{{ currentAccount?.accountNumber }}</div>
+              <button mat-icon-button matListItemMeta (click)="copyAccountNumber()">
+                <mat-icon>content_copy</mat-icon>
+              </button>
+            </mat-list-item>
+            
+            <mat-divider></mat-divider>
+            
+            <mat-list-item>
+              <mat-icon matListItemIcon>calendar_today</mat-icon>
+              <div matListItemTitle>Account Created</div>
+              <div matListItemLine>{{ currentAccount?.createdAt | date:'medium' }}</div>
+            </mat-list-item>
+          </mat-list>
+        </mat-card-content>
+      </mat-card>
+    </mat-tab>
+
+    <!-- Transaction Statistics Tab -->
+    <mat-tab label="Statistics">
+      <mat-card class="tab-content">
+        <mat-card-header>
+          <mat-card-title>Transaction Statistics</mat-card-title>
+          <mat-card-subtitle>Your transaction activity overview</mat-card-subtitle>
+        </mat-card-header>
+        
+        <mat-card-content>
+          <div class="stats-grid">
+            <div class="stat-card">
+              <mat-icon>receipt_long</mat-icon>
+              <div class="stat-value">{{ transactionStats.totalTransactions || 0 }}</div>
+              <div class="stat-label">Total Transactions</div>
+            </div>
+            
+            <div class="stat-card">
+              <mat-icon>arrow_upward</mat-icon>
+              <div class="stat-value">{{ transactionStats.sentTransactions || 0 }}</div>
+              <div class="stat-label">Sent</div>
+            </div>
+            
+            <div class="stat-card">
+              <mat-icon>arrow_downward</mat-icon>
+              <div class="stat-value">{{ transactionStats.receivedTransactions || 0 }}</div>
+              <div class="stat-label">Received</div>
+            </div>
+            
+            <div class="stat-card">
+              <mat-icon>trending_up</mat-icon>
+              <div class="stat-value">₹{{ (transactionStats.totalAmount || 0) | number:'1.2-2' }}</div>
+              <div class="stat-label">Total Sent</div>
+            </div>
+            
+            <div class="stat-card">
+              <mat-icon>trending_down</mat-icon>
+              <div class="stat-value">₹{{ (transactionStats.receivedAmount || 0) | number:'1.2-2' }}</div>
+              <div class="stat-label">Total Received</div>
+            </div>
+          </div>
+        </mat-card-content>
+        
+        <mat-card-actions>
+          <button mat-button (click)="goToTransactionHistory()">
+            <mat-icon>history</mat-icon>
+            View Full History
+          </button>
+        </mat-card-actions>
+      </mat-card>
+    </mat-tab>
+
+    <!-- Settings Tab -->
+    <mat-tab label="Settings">
+      <mat-card class="tab-content">
+        <mat-card-header>
+          <mat-card-title>Settings</mat-card-title>
+          <mat-card-subtitle>Manage your account settings</mat-card-subtitle>
+        </mat-card-header>
+        
+        <mat-card-content>
+          <mat-list>
+            <mat-list-item>
+              <mat-icon matListItemIcon>dashboard</mat-icon>
+              <div matListItemTitle>Dashboard</div>
+              <div matListItemLine>Go to main dashboard</div>
+              <button mat-button matListItemMeta (click)="goToDashboard()">
+                <mat-icon>arrow_forward</mat-icon>
+              </button>
+            </mat-list-item>
+            
+            <mat-divider></mat-divider>
+            
+            <mat-list-item>
+              <mat-icon matListItemIcon>history</mat-icon>
+              <div matListItemTitle>Transaction History</div>
+              <div matListItemLine>View all your transactions</div>
+              <button mat-button matListItemMeta (click)="goToTransactionHistory()">
+                <mat-icon>arrow_forward</mat-icon>
+              </button>
+            </mat-list-item>
+            
+            <mat-divider></mat-divider>
+            
+            <mat-list-item>
+              <mat-icon matListItemIcon color="warn">logout</mat-icon>
+              <div matListItemTitle>Logout</div>
+              <div matListItemLine>Sign out of your account</div>
+              <button mat-button color="warn" matListItemMeta (click)="logout()">
+                <mat-icon>logout</mat-icon>
+              </button>
+            </mat-list-item>
+          </mat-list>
+        </mat-card-content>
+      </mat-card>
+    </mat-tab>
+  </mat-tab-group>
+</div>

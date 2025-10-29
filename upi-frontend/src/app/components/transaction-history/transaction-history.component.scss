@@ -1,0 +1,257 @@
+.history-container {
+  padding: 20px;
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+.header-card {
+  margin-bottom: 20px;
+  
+  mat-card-header {
+    mat-card-title {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 24px;
+    }
+    
+    mat-card-subtitle {
+      color: #666;
+      margin-top: 8px;
+    }
+  }
+  
+  mat-card-actions {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    
+    button {
+      mat-icon {
+        margin-right: 4px;
+      }
+    }
+  }
+}
+
+.filter-card {
+  margin-bottom: 20px;
+  
+  .filter-form {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 16px;
+    align-items: end;
+    
+    mat-form-field {
+      width: 100%;
+    }
+    
+    button {
+      height: 40px;
+      white-space: nowrap;
+    }
+  }
+}
+
+.transactions-card {
+  .tab-header {
+    padding: 16px;
+    border-bottom: 1px solid #eee;
+    
+    .transaction-count {
+      color: #666;
+      font-size: 14px;
+    }
+  }
+}
+
+.transaction-list {
+  .transaction-item {
+    border-bottom: 1px solid #eee;
+    padding: 16px 0;
+    
+    &:last-child {
+      border-bottom: none;
+    }
+    
+    .transaction-title {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 4px;
+      
+      .counterparty {
+        font-weight: 500;
+        color: #333;
+        font-size: 16px;
+      }
+      
+      .status-chip {
+        font-size: 11px;
+        height: 20px;
+        line-height: 20px;
+        padding: 0 8px;
+      }
+    }
+    
+    .transaction-details {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      
+      .description {
+        color: #666;
+        font-size: 14px;
+      }
+      
+      .transaction-id {
+        color: #999;
+        font-size: 12px;
+        font-family: monospace;
+      }
+      
+      .date {
+        color: #999;
+        font-size: 12px;
+      }
+    }
+    
+    .transaction-amount {
+      text-align: right;
+      
+      .amount-value {
+        font-weight: 600;
+        font-size: 16px;
+        display: block;
+        
+        &.sent {
+          color: #d32f2f;
+        }
+        
+        &.received {
+          color: #2e7d32;
+        }
+      }
+      
+      .amount-type {
+        font-size: 11px;
+        color: #666;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+    }
+    
+    &.sent .transaction-amount .amount-value {
+      color: #d32f2f;
+    }
+    
+    &.received .transaction-amount .amount-value {
+      color: #2e7d32;
+    }
+  }
+}
+
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 20px;
+  
+  p {
+    margin-top: 16px;
+    color: #666;
+  }
+}
+
+.empty-state {
+  text-align: center;
+  padding: 60px 20px;
+  
+  mat-icon {
+    font-size: 64px;
+    width: 64px;
+    height: 64px;
+    color: #ccc;
+    margin-bottom: 16px;
+  }
+  
+  h3 {
+    margin: 0 0 8px 0;
+    color: #666;
+    font-weight: 400;
+  }
+  
+  p {
+    margin: 0 0 24px 0;
+    color: #999;
+    font-size: 14px;
+  }
+  
+  button {
+    mat-icon {
+      margin-right: 8px;
+      font-size: 18px;
+      width: 18px;
+      height: 18px;
+    }
+  }
+}
+
+// Responsive Design
+@media (max-width: 768px) {
+  .history-container {
+    padding: 16px;
+  }
+  
+  .filter-form {
+    grid-template-columns: 1fr;
+  }
+  
+  .header-card mat-card-actions {
+    flex-direction: column;
+    
+    button {
+      width: 100%;
+    }
+  }
+  
+  .transaction-item {
+    .transaction-title {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 8px;
+    }
+    
+    .transaction-details {
+      margin: 8px 0;
+    }
+  }
+}
+
+// Material Design Overrides
+::ng-deep {
+  .mat-mdc-tab-group {
+    .mat-mdc-tab-header {
+      border-bottom: 1px solid #eee;
+    }
+  }
+  
+  .mat-mdc-chip {
+    &.mat-primary {
+      background-color: #e8f5e8;
+      color: #2e7d32;
+    }
+    
+    &.mat-warn {
+      background-color: #ffebee;
+      color: #d32f2f;
+    }
+    
+    &.mat-accent {
+      background-color: #fff3e0;
+      color: #f57c00;
+    }
+  }
+}

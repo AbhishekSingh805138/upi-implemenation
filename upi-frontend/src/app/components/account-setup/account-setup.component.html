@@ -1,0 +1,58 @@
+<div class="account-setup-container">
+  <mat-card class="setup-card">
+    <mat-card-header>
+      <mat-card-title>
+        <mat-icon>account_balance_wallet</mat-icon>
+        Set Up Your Account
+      </mat-card-title>
+      <mat-card-subtitle>
+        Welcome {{ currentUser?.fullName }}! Let's create your UPI account.
+      </mat-card-subtitle>
+    </mat-card-header>
+
+    <mat-card-content>
+      <div class="info-section">
+        <mat-icon color="primary">info</mat-icon>
+        <p>
+          Your account will be created with a unique UPI ID that you can use for all transactions.
+          You can add an initial balance to get started.
+        </p>
+      </div>
+
+      <form [formGroup]="accountForm" (ngSubmit)="onSubmit()">
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Initial Balance (₹)</mat-label>
+          <input matInput 
+                 type="number"
+                 formControlName="initialBalance" 
+                 placeholder="Enter initial balance"
+                 [class.mat-form-field-invalid]="accountForm.get('initialBalance')?.invalid && accountForm.get('initialBalance')?.touched">
+          <span matTextPrefix>₹&nbsp;</span>
+          <mat-icon matSuffix>account_balance</mat-icon>
+          <mat-hint>Minimum: ₹0, Maximum: ₹10,00,000</mat-hint>
+          <mat-error *ngIf="accountForm.get('initialBalance')?.invalid && accountForm.get('initialBalance')?.touched">
+            {{ getErrorMessage('initialBalance') }}
+          </mat-error>
+        </mat-form-field>
+
+        <div class="button-container">
+          <button mat-raised-button 
+                  color="primary" 
+                  type="submit" 
+                  [disabled]="accountForm.invalid || isLoading"
+                  class="full-width">
+            <mat-spinner *ngIf="isLoading" diameter="20"></mat-spinner>
+            <span *ngIf="!isLoading">Create Account</span>
+          </button>
+        </div>
+      </form>
+    </mat-card-content>
+
+    <mat-card-actions>
+      <p class="note">
+        <mat-icon>security</mat-icon>
+        Your account will be secured and all transactions will be tracked.
+      </p>
+    </mat-card-actions>
+  </mat-card>
+</div>

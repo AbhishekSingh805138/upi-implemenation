@@ -1,0 +1,158 @@
+<div class="history-container">
+  <mat-card class="header-card">
+    <mat-card-header>
+      <mat-card-title>
+        <mat-icon>history</mat-icon>
+        Transaction History
+      </mat-card-title>
+      <mat-card-subtitle>
+        View and manage your transaction history
+      </mat-card-subtitle>
+    </mat-card-header>
+    <mat-card-actions>
+      <button mat-button (click)="refreshTransactions()">
+        <mat-icon>refresh</mat-icon>
+        Refresh
+      </button>
+      <button mat-button (click)="exportTransactions()" [disabled]="filteredTransactions.length === 0">
+        <mat-icon>download</mat-icon>
+        Export CSV
+      </button>
+      <button mat-raised-button color="primary" (click)="makeNewTransfer()">
+        <mat-icon>send</mat-icon>
+        New Transfer
+      </button>
+    </mat-card-actions>
+  </mat-card>
+
+  <!-- Filters -->
+  <mat-card class="filter-card">
+    <mat-card-content>
+      <form [formGroup]="filterForm" class="filter-form">
+        <mat-form-field appearance="outline">
+          <mat-label>Search</mat-label>
+          <input matInput 
+                 formControlName="searchTerm" 
+                 placeholder="Search by UPI ID, description, or transaction ID">
+          <mat-icon matSuffix>search</mat-icon>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Status</mat-label>
+          <mat-select formControlName="status">
+            <mat-option value="">All Statuses</mat-option>
+            <mat-option *ngFor="let status of transactionStatuses" [value]="status">
+              {{ status }}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Start Date</mat-label>
+          <input matInput 
+                 [matDatepicker]="startPicker" 
+                 formControlName="startDate">
+          <mat-datepicker-toggle matIconSuffix [for]="startPicker"></mat-datepicker-toggle>
+          <mat-datepicker #startPicker></mat-datepicker>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>End Date</mat-label>
+          <input matInput 
+                 [matDatepicker]="endPicker" 
+                 formControlName="endDate">
+          <mat-datepicker-toggle matIconSuffix [for]="endPicker"></mat-datepicker-toggle>
+          <mat-datepicker #endPicker></mat-datepicker>
+        </mat-form-field>
+
+        <button mat-button type="button" (click)="clearFilters()">
+          <mat-icon>clear</mat-icon>
+          Clear Filters
+        </button>
+      </form>
+    </mat-card-content>
+  </mat-card>
+
+  <!-- Transaction Tabs -->
+  <mat-card class="transactions-card">
+    <mat-tab-group (selectedTabChange)="onTabChange($event)">
+      <mat-tab label="All Transactions">
+        <ng-template matTabContent>
+          <div class="tab-header">
+            <span class="transaction-count">{{ filteredTransactions.length }} transactions</span>
+          </div>
+        </ng-template>
+      </mat-tab>
+      
+      <mat-tab label="Sent">
+        <ng-template matTabContent>
+          <div class="tab-header">
+            <span class="transaction-count">{{ filteredTransactions.length }} sent transactions</span>
+          </div>
+        </ng-template>
+      </mat-tab>
+      
+      <mat-tab label="Received">
+        <ng-template matTabContent>
+          <div class="tab-header">
+            <span class="transaction-count">{{ filteredTransactions.length }} received transactions</span>
+          </div>
+        </ng-template>
+      </mat-tab>
+    </mat-tab-group>
+
+    <!-- Loading State -->
+    <div *ngIf="isLoading" class="loading-container">
+      <mat-spinner diameter="40"></mat-spinner>
+      <p>Loading transactions...</p>
+    </div>
+
+    <!-- Transaction List -->
+    <mat-list *ngIf="!isLoading && filteredTransactions.length > 0" class="transaction-list">
+      <mat-list-item *ngFor="let transaction of filteredTransactions" class="transaction-item">
+        <mat-icon matListItemIcon 
+                  [color]="getTransactionDisplayInfo(transaction).color">
+          {{ getTransactionDisplayInfo(transaction).icon }}
+        </mat-icon>
+        
+        <div matListItemTitle class="transaction-title">
+          <span class="counterparty">{{ getTransactionDisplayInfo(transaction).counterparty }}</span>
+          <mat-chip [color]="getStatusColor(transaction.status)" class="status-chip">
+            {{ transaction.status }}
+          </mat-chip>
+        </div>
+        
+        <div matListItemLine class="transaction-details">
+          <span class="description">{{ transaction.description || 'No description' }}</span>
+          <span class="transaction-id">ID: {{ transaction.transactionRef }}</span>
+          <span class="date">{{ formatDate(transaction.createdAt) }}</span>
+        </div>
+        
+        <div matListItemMeta class="transaction-amount"
+             [class.sent]="getTransactionDisplayInfo(transaction).type === 'sent'"
+             [class.received]="getTransactionDisplayInfo(transaction).type === 'received'">
+          <span class="amount-value">
+            {{ getTransactionDisplayInfo(transaction).type === 'sent' ? '-' : '+' }}₹{{ transaction.amount | number:'1.2-2' }}
+          </span>
+          <span class="amount-type">{{ getTransactionDisplayInfo(transaction).type }}</span>
+        </div>
+      </mat-list-item>
+    </mat-list>
+
+    <!-- Empty State -->
+    <div *ngIf="!isLoading && filteredTransactions.length === 0" class="empty-state">
+      <mat-icon>inbox</mat-icon>
+      <h3>No transactions found</h3>
+      <p *ngIf="filterForm.value.searchTerm || filterForm.value.status || filterForm.value.startDate || filterForm.value.endDate">
+        Try adjusting your filters to see more results.
+      </p>
+      <p *ngIf="allTransactions.length === 0">
+        You haven't made any transactions yet.
+      </p>
+      <button mat-raised-button color="primary" (click)="makeNewTransfer()">
+        <mat-icon>send</mat-icon>
+        Make Your First Transfer
+      </button>
+    </div>
+  </mat-card>
+</div>

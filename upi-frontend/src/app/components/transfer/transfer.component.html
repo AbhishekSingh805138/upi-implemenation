@@ -1,0 +1,177 @@
+<div class="transfer-container">
+  <!-- Success State -->
+  <div *ngIf="completedTransaction" class="success-container">
+    <mat-card class="success-card">
+      <mat-card-header>
+        <mat-card-title>
+          <mat-icon color="primary">check_circle</mat-icon>
+          Transfer Successful!
+        </mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <div class="transaction-details">
+          <div class="detail-item">
+            <span class="label">Transaction ID:</span>
+            <span class="value">{{ completedTransaction.transactionRef }}</span>
+          </div>
+          <div class="detail-item">
+            <span class="label">Amount:</span>
+            <span class="value amount">₹{{ completedTransaction.amount | number:'1.2-2' }}</span>
+          </div>
+          <div class="detail-item">
+            <span class="label">To:</span>
+            <span class="value">{{ completedTransaction.receiverUpiId }}</span>
+          </div>
+          <div class="detail-item">
+            <span class="label">Description:</span>
+            <span class="value">{{ completedTransaction.description }}</span>
+          </div>
+          <div class="detail-item">
+            <span class="label">Status:</span>
+            <span class="value status-success">{{ completedTransaction.status }}</span>
+          </div>
+        </div>
+      </mat-card-content>
+      <mat-card-actions>
+        <button mat-raised-button color="primary" (click)="makeAnotherTransfer()">
+          <mat-icon>send</mat-icon>
+          Make Another Transfer
+        </button>
+        <button mat-button (click)="viewTransactionHistory()">
+          <mat-icon>history</mat-icon>
+          View History
+        </button>
+        <button mat-button (click)="goToDashboard()">
+          <mat-icon>dashboard</mat-icon>
+          Dashboard
+        </button>
+      </mat-card-actions>
+    </mat-card>
+  </div>
+
+  <!-- Transfer Form -->
+  <div *ngIf="!completedTransaction" class="form-container">
+    <mat-card class="transfer-card">
+      <mat-card-header>
+        <mat-card-title>
+          <mat-icon>send</mat-icon>
+          Send Money
+        </mat-card-title>
+        <mat-card-subtitle>
+          Transfer money to any UPI ID instantly
+        </mat-card-subtitle>
+      </mat-card-header>
+
+      <mat-card-content>
+        <!-- Account Info -->
+        <div class="account-info">
+          <div class="info-item">
+            <mat-icon>account_balance_wallet</mat-icon>
+            <div>
+              <div class="info-label">Available Balance</div>
+              <div class="info-value">₹{{ currentAccount?.balance | number:'1.2-2' }}</div>
+            </div>
+          </div>
+          <div class="info-item">
+            <mat-icon>credit_card</mat-icon>
+            <div>
+              <div class="info-label">Your UPI ID</div>
+              <div class="info-value">{{ currentAccount?.upiId }}</div>
+            </div>
+          </div>
+        </div>
+
+        <form [formGroup]="transferForm" (ngSubmit)="onSubmit()">
+          <!-- Receiver UPI ID -->
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Receiver UPI ID</mat-label>
+            <input matInput 
+                   formControlName="receiverUpiId" 
+                   placeholder="Enter UPI ID (e.g., user@bank)"
+                   (blur)="validateUpiId()"
+                   [class.mat-form-field-invalid]="transferForm.get('receiverUpiId')?.invalid && transferForm.get('receiverUpiId')?.touched">
+            <mat-icon matSuffix>person</mat-icon>
+            
+            <!-- UPI Validation Status -->
+            <mat-spinner *ngIf="isValidatingUpi" matSuffix diameter="20"></mat-spinner>
+            <mat-icon *ngIf="!isValidatingUpi && upiValidationResult === true" 
+                      matSuffix color="primary">check_circle</mat-icon>
+            <mat-icon *ngIf="!isValidatingUpi && upiValidationResult === false" 
+                      matSuffix color="warn">error</mat-icon>
+            
+            <mat-error *ngIf="transferForm.get('receiverUpiId')?.invalid && transferForm.get('receiverUpiId')?.touched">
+              {{ getErrorMessage('receiverUpiId') }}
+            </mat-error>
+            <mat-hint *ngIf="!transferForm.get('receiverUpiId')?.invalid && upiValidationResult === true">
+              UPI ID verified ✓
+            </mat-hint>
+          </mat-form-field>
+
+          <!-- Amount -->
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Amount</mat-label>
+            <input matInput 
+                   type="number"
+                   formControlName="amount" 
+                   placeholder="Enter amount"
+                   [class.mat-form-field-invalid]="transferForm.get('amount')?.invalid && transferForm.get('amount')?.touched">
+            <span matTextPrefix>₹&nbsp;</span>
+            <mat-icon matSuffix>currency_rupee</mat-icon>
+            <mat-hint>Min: ₹1, Max: ₹1,00,000</mat-hint>
+            <mat-error *ngIf="transferForm.get('amount')?.invalid && transferForm.get('amount')?.touched">
+              {{ getErrorMessage('amount') }}
+            </mat-error>
+          </mat-form-field>
+
+          <!-- Description -->
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Description (Optional)</mat-label>
+            <textarea matInput 
+                      formControlName="description" 
+                      placeholder="Enter description"
+                      rows="3"
+                      maxlength="255"
+                      [class.mat-form-field-invalid]="transferForm.get('description')?.invalid && transferForm.get('description')?.touched">
+            </textarea>
+            <mat-icon matSuffix>description</mat-icon>
+            <mat-hint>{{ transferForm.get('description')?.value?.length || 0 }}/255</mat-hint>
+            <mat-error *ngIf="transferForm.get('description')?.invalid && transferForm.get('description')?.touched">
+              {{ getErrorMessage('description') }}
+            </mat-error>
+          </mat-form-field>
+
+          <!-- Transfer Summary -->
+          <div class="transfer-summary" *ngIf="transferForm.get('amount')?.value && transferForm.get('receiverUpiId')?.value">
+            <h4>Transfer Summary</h4>
+            <div class="summary-item">
+              <span>To:</span>
+              <span>{{ transferForm.get('receiverUpiId')?.value }}</span>
+            </div>
+            <div class="summary-item">
+              <span>Amount:</span>
+              <span class="amount">₹{{ transferForm.get('amount')?.value | number:'1.2-2' }}</span>
+            </div>
+            <div class="summary-item">
+              <span>Description:</span>
+              <span>{{ transferForm.get('description')?.value || 'No description' }}</span>
+            </div>
+          </div>
+
+          <!-- Submit Button -->
+          <div class="button-container">
+            <button mat-raised-button 
+                    color="primary" 
+                    type="submit" 
+                    [disabled]="!canTransfer()"
+                    class="full-width transfer-btn">
+              <mat-spinner *ngIf="isLoading" diameter="20"></mat-spinner>
+              <mat-icon *ngIf="!isLoading">send</mat-icon>
+              <span *ngIf="!isLoading">Send Money</span>
+              <span *ngIf="isLoading">Processing...</span>
+            </button>
+          </div>
+        </form>
+      </mat-card-content>
+    </mat-card>
+  </div>
+</div>
