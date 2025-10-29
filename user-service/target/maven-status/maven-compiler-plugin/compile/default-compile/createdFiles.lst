@@ -1,0 +1,14 @@
+com\upi\user\service\UserService.class
+com\upi\user\controller\UserController.class
+com\upi\user\UserServiceApplication.class
+com\upi\user\exception\GlobalExceptionHandler.class
+com\upi\user\dto\UserUpdateRequest.class
+com\upi\user\exception\GlobalExceptionHandler$ErrorResponse.class
+com\upi\user\dto\UserResponse.class
+com\upi\user\exception\UserAlreadyExistsException.class
+com\upi\user\repository\UserRepository.class
+com\upi\user\entity\User.class
+com\upi\user\dto\UserLoginRequest.class
+com\upi\user\dto\UserRegistrationRequest.class
+com\upi\user\exception\UserNotFoundException.class
+com\upi\user\exception\GlobalExceptionHandler$ValidationErrorResponse.class

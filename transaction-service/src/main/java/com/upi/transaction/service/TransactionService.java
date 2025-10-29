@@ -129,7 +129,7 @@ public class TransactionService {
         Mono<AccountServiceClient.BalanceResponse> debitSender = 
                 accountServiceClient.updateBalance(
                         transaction.getSenderUpiId(), 
-                        transaction.getAmount().negate(), 
+                        transaction.getAmount(), 
                         "DEBIT"
                 );
         

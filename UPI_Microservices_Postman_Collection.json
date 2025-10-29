@@ -1,0 +1,994 @@
+{
+	"info": {
+		"_postman_id": "upi-microservices-collection",
+		"name": "UPI Microservices API Collection",
+		"description": "Complete API collection for UPI microservices system including User Service, Account Service, Transaction Service, and API Gateway endpoints",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "User Service APIs",
+			"item": [
+				{
+					"name": "Register User",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"username\": \"john_doe\",\n    \"email\": \"john@example.com\",\n    \"phone\": \"1234567890\",\n    \"fullName\": \"John Doe\"\n}"
+						},
+						"url": {
+							"raw": "{{USER_SERVICE_URL}}/api/users/register",
+							"host": [
+								"{{USER_SERVICE_URL}}"
+							],
+							"path": [
+								"api",
+								"users",
+								"register"
+							]
+						},
+						"description": "Register a new user in the system"
+					}
+				},
+				{
+					"name": "User Login",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"identifier\": \"john_doe\"\n}"
+						},
+						"url": {
+							"raw": "{{USER_SERVICE_URL}}/api/users/login",
+							"host": [
+								"{{USER_SERVICE_URL}}"
+							],
+							"path": [
+								"api",
+								"users",
+								"login"
+							]
+						},
+						"description": "Login user with username or email"
+					}
+				},
+				{
+					"name": "Get User by ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{USER_SERVICE_URL}}/api/users/{{USER_ID}}",
+							"host": [
+								"{{USER_SERVICE_URL}}"
+							],
+							"path": [
+								"api",
+								"users",
+								"{{USER_ID}}"
+							]
+						},
+						"description": "Get user details by user ID"
+					}
+				},
+				{
+					"name": "Get User by Username",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{USER_SERVICE_URL}}/api/users/username/{{USERNAME}}",
+							"host": [
+								"{{USER_SERVICE_URL}}"
+							],
+							"path": [
+								"api",
+								"users",
+								"username",
+								"{{USERNAME}}"
+							]
+						},
+						"description": "Get user details by username"
+					}
+				},
+				{
+					"name": "Update User Profile",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"john.updated@example.com\",\n    \"phone\": \"9876543210\",\n    \"fullName\": \"John Doe Updated\"\n}"
+						},
+						"url": {
+							"raw": "{{USER_SERVICE_URL}}/api/users/{{USER_ID}}",
+							"host": [
+								"{{USER_SERVICE_URL}}"
+							],
+							"path": [
+								"api",
+								"users",
+								"{{USER_ID}}"
+							]
+						},
+						"description": "Update user profile information"
+					}
+				},
+				{
+					"name": "Validate User Exists",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{USER_SERVICE_URL}}/api/users/{{USER_ID}}/validate",
+							"host": [
+								"{{USER_SERVICE_URL}}"
+							],
+							"path": [
+								"api",
+								"users",
+								"{{USER_ID}}",
+								"validate"
+							]
+						},
+						"description": "Validate if user exists by ID"
+					}
+				},
+				{
+					"name": "Get All Users",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{USER_SERVICE_URL}}/api/users",
+							"host": [
+								"{{USER_SERVICE_URL}}"
+							],
+							"path": [
+								"api",
+								"users"
+							]
+						},
+						"description": "Get all users (admin endpoint)"
+					}
+				},
+				{
+					"name": "Delete User",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{USER_SERVICE_URL}}/api/users/{{USER_ID}}",
+							"host": [
+								"{{USER_SERVICE_URL}}"
+							],
+							"path": [
+								"api",
+								"users",
+								"{{USER_ID}}"
+							]
+						},
+						"description": "Delete user by ID"
+					}
+				},
+				{
+					"name": "User Service Health Check",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{USER_SERVICE_URL}}/api/users/health",
+							"host": [
+								"{{USER_SERVICE_URL}}"
+							],
+							"path": [
+								"api",
+								"users",
+								"health"
+							]
+						},
+						"description": "Check if User Service is running"
+					}
+				}
+			],
+			"description": "All User Service API endpoints for user management"
+		},
+		{
+			"name": "Account Service APIs",
+			"item": [
+				{
+					"name": "Create Account",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"userId\": {{USER_ID}},\n    \"initialBalance\": 1000.00\n}"
+						},
+						"url": {
+							"raw": "{{ACCOUNT_SERVICE_URL}}/api/accounts",
+							"host": [
+								"{{ACCOUNT_SERVICE_URL}}"
+							],
+							"path": [
+								"api",
+								"accounts"
+							]
+						},
+						"description": "Create a new account for a user"
+					}
+				},
+				{
+					"name": "Get Account by User ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{ACCOUNT_SERVICE_URL}}/api/accounts/{{USER_ID}}",
+							"host": [
+								"{{ACCOUNT_SERVICE_URL}}"
+							],
+							"path": [
+								"api",
+								"accounts",
+								"{{USER_ID}}"
+							]
+						},
+						"description": "Get account details by user ID"
+					}
+				},
+				{
+					"name": "Get Account by UPI ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{ACCOUNT_SERVICE_URL}}/api/accounts/upi/{{UPI_ID}}",
+							"host": [
+								"{{ACCOUNT_SERVICE_URL}}"
+							],
+							"path": [
+								"api",
+								"accounts",
+								"upi",
+								"{{UPI_ID}}"
+							]
+						},
+						"description": "Get account details by UPI ID"
+					}
+				},
+				{
+					"name": "Get Balance by UPI ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{ACCOUNT_SERVICE_URL}}/api/accounts/upi/{{UPI_ID}}/balance",
+							"host": [
+								"{{ACCOUNT_SERVICE_URL}}"
+							],
+							"path": [
+								"api",
+								"accounts",
+								"upi",
+								"{{UPI_ID}}",
+								"balance"
+							]
+						},
+						"description": "Get account balance by UPI ID"
+					}
+				},
+				{
+					"name": "Get Balance by Account ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{ACCOUNT_SERVICE_URL}}/api/accounts/{{ACCOUNT_ID}}/balance",
+							"host": [
+								"{{ACCOUNT_SERVICE_URL}}"
+							],
+							"path": [
+								"api",
+								"accounts",
+								"{{ACCOUNT_ID}}",
+								"balance"
+							]
+						},
+						"description": "Get account balance by account ID"
+					}
+				},
+				{
+					"name": "Update Balance by UPI ID (Credit)",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"amount\": 500.00,\n    \"operation\": \"CREDIT\"\n}"
+						},
+						"url": {
+							"raw": "{{ACCOUNT_SERVICE_URL}}/api/accounts/upi/{{UPI_ID}}/balance",
+							"host": [
+								"{{ACCOUNT_SERVICE_URL}}"
+							],
+							"path": [
+								"api",
+								"accounts",
+								"upi",
+								"{{UPI_ID}}",
+								"balance"
+							]
+						},
+						"description": "Credit amount to account by UPI ID"
+					}
+				},
+				{
+					"name": "Update Balance by UPI ID (Debit)",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"amount\": 200.00,\n    \"operation\": \"DEBIT\"\n}"
+						},
+						"url": {
+							"raw": "{{ACCOUNT_SERVICE_URL}}/api/accounts/upi/{{UPI_ID}}/balance",
+							"host": [
+								"{{ACCOUNT_SERVICE_URL}}"
+							],
+							"path": [
+								"api",
+								"accounts",
+								"upi",
+								"{{UPI_ID}}",
+								"balance"
+							]
+						},
+						"description": "Debit amount from account by UPI ID"
+					}
+				},
+				{
+					"name": "Validate UPI ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{ACCOUNT_SERVICE_URL}}/api/accounts/validate/{{UPI_ID}}",
+							"host": [
+								"{{ACCOUNT_SERVICE_URL}}"
+							],
+							"path": [
+								"api",
+								"accounts",
+								"validate",
+								"{{UPI_ID}}"
+							]
+						},
+						"description": "Validate if UPI ID exists and is valid"
+					}
+				}
+			],
+			"description": "All Account Service API endpoints for account and balance management"
+		},
+		{
+			"name": "Transaction Service APIs",
+			"item": [
+				{
+					"name": "Process Money Transfer",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"senderUpiId\": \"{{SENDER_UPI_ID}}\",\n    \"receiverUpiId\": \"{{RECEIVER_UPI_ID}}\",\n    \"amount\": 250.00,\n    \"description\": \"Payment for services\"\n}"
+						},
+						"url": {
+							"raw": "{{TRANSACTION_SERVICE_URL}}/api/transactions/transfer",
+							"host": [
+								"{{TRANSACTION_SERVICE_URL}}"
+							],
+							"path": [
+								"api",
+								"transactions",
+								"transfer"
+							]
+						},
+						"description": "Process money transfer between two UPI IDs"
+					}
+				},
+				{
+					"name": "Get Transaction by ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{TRANSACTION_SERVICE_URL}}/api/transactions/{{TRANSACTION_ID}}",
+							"host": [
+								"{{TRANSACTION_SERVICE_URL}}"
+							],
+							"path": [
+								"api",
+								"transactions",
+								"{{TRANSACTION_ID}}"
+							]
+						},
+						"description": "Get transaction details by transaction ID"
+					}
+				},
+				{
+					"name": "Get User Transaction History",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{TRANSACTION_SERVICE_URL}}/api/transactions/user/{{UPI_ID}}",
+							"host": [
+								"{{TRANSACTION_SERVICE_URL}}"
+							],
+							"path": [
+								"api",
+								"transactions",
+								"user",
+								"{{UPI_ID}}"
+							]
+						},
+						"description": "Get all transactions for a user by UPI ID"
+					}
+				},
+				{
+					"name": "Get Sent Transactions",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{TRANSACTION_SERVICE_URL}}/api/transactions/user/{{UPI_ID}}/sent",
+							"host": [
+								"{{TRANSACTION_SERVICE_URL}}"
+							],
+							"path": [
+								"api",
+								"transactions",
+								"user",
+								"{{UPI_ID}}",
+								"sent"
+							]
+						},
+						"description": "Get transactions sent by a user"
+					}
+				},
+				{
+					"name": "Get Received Transactions",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{TRANSACTION_SERVICE_URL}}/api/transactions/user/{{UPI_ID}}/received",
+							"host": [
+								"{{TRANSACTION_SERVICE_URL}}"
+							],
+							"path": [
+								"api",
+								"transactions",
+								"user",
+								"{{UPI_ID}}",
+								"received"
+							]
+						},
+						"description": "Get transactions received by a user"
+					}
+				},
+				{
+					"name": "Get Transactions by Status",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{TRANSACTION_SERVICE_URL}}/api/transactions/status/{{STATUS}}",
+							"host": [
+								"{{TRANSACTION_SERVICE_URL}}"
+							],
+							"path": [
+								"api",
+								"transactions",
+								"status",
+								"{{STATUS}}"
+							]
+						},
+						"description": "Get transactions by status (SUCCESS, FAILED, PENDING)"
+					}
+				},
+				{
+					"name": "Get Filtered Transactions",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{TRANSACTION_SERVICE_URL}}/api/transactions/user/{{UPI_ID}}/filter?startDate={{START_DATE}}&endDate={{END_DATE}}&status={{STATUS}}",
+							"host": [
+								"{{TRANSACTION_SERVICE_URL}}"
+							],
+							"path": [
+								"api",
+								"transactions",
+								"user",
+								"{{UPI_ID}}",
+								"filter"
+							],
+							"query": [
+								{
+									"key": "startDate",
+									"value": "{{START_DATE}}"
+								},
+								{
+									"key": "endDate",
+									"value": "{{END_DATE}}"
+								},
+								{
+									"key": "status",
+									"value": "{{STATUS}}"
+								}
+							]
+						},
+						"description": "Get filtered transactions by date range and status"
+					}
+				},
+				{
+					"name": "Get Recent Transactions",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{TRANSACTION_SERVICE_URL}}/api/transactions/user/{{UPI_ID}}/recent?limit={{LIMIT}}",
+							"host": [
+								"{{TRANSACTION_SERVICE_URL}}"
+							],
+							"path": [
+								"api",
+								"transactions",
+								"user",
+								"{{UPI_ID}}",
+								"recent"
+							],
+							"query": [
+								{
+									"key": "limit",
+									"value": "{{LIMIT}}"
+								}
+							]
+						},
+						"description": "Get recent transactions for a user"
+					}
+				},
+				{
+					"name": "Get Transaction Count",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{TRANSACTION_SERVICE_URL}}/api/transactions/user/{{UPI_ID}}/count",
+							"host": [
+								"{{TRANSACTION_SERVICE_URL}}"
+							],
+							"path": [
+								"api",
+								"transactions",
+								"user",
+								"{{UPI_ID}}",
+								"count"
+							]
+						},
+						"description": "Get successful transaction count for a user"
+					}
+				},
+				{
+					"name": "Get Transaction by Reference",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{TRANSACTION_SERVICE_URL}}/api/transactions/reference/{{TRANSACTION_REF}}",
+							"host": [
+								"{{TRANSACTION_SERVICE_URL}}"
+							],
+							"path": [
+								"api",
+								"transactions",
+								"reference",
+								"{{TRANSACTION_REF}}"
+							]
+						},
+						"description": "Get transaction by transaction reference number"
+					}
+				}
+			],
+			"description": "All Transaction Service API endpoints for payment processing and history"
+		},
+		{
+			"name": "API Gateway Routes",
+			"item": [
+				{
+					"name": "Gateway - Register User",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"username\": \"gateway_user\",\n    \"email\": \"gateway@example.com\",\n    \"phone\": \"5555555555\",\n    \"fullName\": \"Gateway Test User\"\n}"
+						},
+						"url": {
+							"raw": "{{API_GATEWAY_URL}}/api/users/register",
+							"host": [
+								"{{API_GATEWAY_URL}}"
+							],
+							"path": [
+								"api",
+								"users",
+								"register"
+							]
+						},
+						"description": "Register user through API Gateway"
+					}
+				},
+				{
+					"name": "Gateway - Create Account",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"userId\": {{USER_ID}},\n    \"initialBalance\": 2000.00\n}"
+						},
+						"url": {
+							"raw": "{{API_GATEWAY_URL}}/api/accounts",
+							"host": [
+								"{{API_GATEWAY_URL}}"
+							],
+							"path": [
+								"api",
+								"accounts"
+							]
+						},
+						"description": "Create account through API Gateway"
+					}
+				},
+				{
+					"name": "Gateway - Process Transfer",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"senderUpiId\": \"{{SENDER_UPI_ID}}\",\n    \"receiverUpiId\": \"{{RECEIVER_UPI_ID}}\",\n    \"amount\": 300.00,\n    \"description\": \"Gateway transfer test\"\n}"
+						},
+						"url": {
+							"raw": "{{API_GATEWAY_URL}}/api/transactions/transfer",
+							"host": [
+								"{{API_GATEWAY_URL}}"
+							],
+							"path": [
+								"api",
+								"transactions",
+								"transfer"
+							]
+						},
+						"description": "Process transfer through API Gateway"
+					}
+				},
+				{
+					"name": "Gateway - Get User",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{API_GATEWAY_URL}}/api/users/{{USER_ID}}",
+							"host": [
+								"{{API_GATEWAY_URL}}"
+							],
+							"path": [
+								"api",
+								"users",
+								"{{USER_ID}}"
+							]
+						},
+						"description": "Get user through API Gateway"
+					}
+				},
+				{
+					"name": "Gateway - Get Account Balance",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{API_GATEWAY_URL}}/api/accounts/upi/{{UPI_ID}}/balance",
+							"host": [
+								"{{API_GATEWAY_URL}}"
+							],
+							"path": [
+								"api",
+								"accounts",
+								"upi",
+								"{{UPI_ID}}",
+								"balance"
+							]
+						},
+						"description": "Get account balance through API Gateway"
+					}
+				},
+				{
+					"name": "Gateway - Get Transaction History",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{API_GATEWAY_URL}}/api/transactions/user/{{UPI_ID}}",
+							"host": [
+								"{{API_GATEWAY_URL}}"
+							],
+							"path": [
+								"api",
+								"transactions",
+								"user",
+								"{{UPI_ID}}"
+							]
+						},
+						"description": "Get transaction history through API Gateway"
+					}
+				}
+			],
+			"description": "API Gateway routes for centralized access to all services"
+		},
+		{
+			"name": "Health Checks & Monitoring",
+			"item": [
+				{
+					"name": "Eureka Dashboard",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{EUREKA_URL}}",
+							"host": [
+								"{{EUREKA_URL}}"
+							]
+						},
+						"description": "Access Eureka service registry dashboard"
+					}
+				},
+				{
+					"name": "User Service Health",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{USER_SERVICE_URL}}/actuator/health",
+							"host": [
+								"{{USER_SERVICE_URL}}"
+							],
+							"path": [
+								"actuator",
+								"health"
+							]
+						},
+						"description": "Check User Service health"
+					}
+				},
+				{
+					"name": "Account Service Health",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{ACCOUNT_SERVICE_URL}}/actuator/health",
+							"host": [
+								"{{ACCOUNT_SERVICE_URL}}"
+							],
+							"path": [
+								"actuator",
+								"health"
+							]
+						},
+						"description": "Check Account Service health"
+					}
+				},
+				{
+					"name": "Transaction Service Health",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{TRANSACTION_SERVICE_URL}}/actuator/health",
+							"host": [
+								"{{TRANSACTION_SERVICE_URL}}"
+							],
+							"path": [
+								"actuator",
+								"health"
+							]
+						},
+						"description": "Check Transaction Service health"
+					}
+				},
+				{
+					"name": "API Gateway Health",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{API_GATEWAY_URL}}/actuator/health",
+							"host": [
+								"{{API_GATEWAY_URL}}"
+							],
+							"path": [
+								"actuator",
+								"health"
+							]
+						},
+						"description": "Check API Gateway health"
+					}
+				}
+			],
+			"description": "Health check endpoints for monitoring all services"
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "EUREKA_URL",
+			"value": "http://localhost:8761",
+			"type": "string"
+		},
+		{
+			"key": "USER_SERVICE_URL",
+			"value": "http://localhost:8081",
+			"type": "string"
+		},
+		{
+			"key": "ACCOUNT_SERVICE_URL",
+			"value": "http://localhost:8082",
+			"type": "string"
+		},
+		{
+			"key": "TRANSACTION_SERVICE_URL",
+			"value": "http://localhost:8083",
+			"type": "string"
+		},
+		{
+			"key": "API_GATEWAY_URL",
+			"value": "http://localhost:8080",
+			"type": "string"
+		},
+		{
+			"key": "USER_ID",
+			"value": "1",
+			"type": "string"
+		},
+		{
+			"key": "USERNAME",
+			"value": "john_doe",
+			"type": "string"
+		},
+		{
+			"key": "UPI_ID",
+			"value": "user17772@upi",
+			"type": "string"
+		},
+		{
+			"key": "SENDER_UPI_ID",
+			"value": "user17772@upi",
+			"type": "string"
+		},
+		{
+			"key": "RECEIVER_UPI_ID",
+			"value": "user21888@upi",
+			"type": "string"
+		},
+		{
+			"key": "ACCOUNT_ID",
+			"value": "1",
+			"type": "string"
+		},
+		{
+			"key": "TRANSACTION_ID",
+			"value": "1",
+			"type": "string"
+		},
+		{
+			"key": "TRANSACTION_REF",
+			"value": "TXN1761738835597083",
+			"type": "string"
+		},
+		{
+			"key": "STATUS",
+			"value": "SUCCESS",
+			"type": "string"
+		},
+		{
+			"key": "START_DATE",
+			"value": "2025-10-29T00:00:00",
+			"type": "string"
+		},
+		{
+			"key": "END_DATE",
+			"value": "2025-10-29T23:59:59",
+			"type": "string"
+		},
+		{
+			"key": "LIMIT",
+			"value": "10",
+			"type": "string"
+		}
+	]
+}

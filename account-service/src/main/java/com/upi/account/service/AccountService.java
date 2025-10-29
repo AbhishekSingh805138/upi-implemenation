@@ -1,7 +1,10 @@
 package com.upi.account.service;
 
+import com.upi.account.client.UserServiceClient;
 import com.upi.account.entity.Account;
 import com.upi.account.repository.AccountRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -14,18 +17,29 @@ import java.util.Random;
 @Transactional
 public class AccountService {
     
+    private static final Logger logger = LoggerFactory.getLogger(AccountService.class);
+    
     private final AccountRepository accountRepository;
+    private final UserServiceClient userServiceClient;
     private final Random random = new Random();
     
     @Autowired
-    public AccountService(AccountRepository accountRepository) {
+    public AccountService(AccountRepository accountRepository, UserServiceClient userServiceClient) {
         this.accountRepository = accountRepository;
+        this.userServiceClient = userServiceClient;
     }
     
     /**
      * Create a new account for a user
      */
     public Account createAccount(Long userId, BigDecimal initialBalance) {
+        logger.info("Creating account for user ID: {}", userId);
+        
+        // Validate user exists
+        if (!userServiceClient.validateUserExists(userId)) {
+            throw new IllegalArgumentException("User not found with ID: " + userId);
+        }
+        
         // Check if user already has an account
         if (accountRepository.existsByUserId(userId)) {
             throw new IllegalArgumentException("User already has an account");
@@ -44,7 +58,10 @@ public class AccountService {
         Account account = new Account(userId, upiId, accountNumber, 
                                     initialBalance != null ? initialBalance : BigDecimal.ZERO);
         
-        return accountRepository.save(account);
+        Account savedAccount = accountRepository.save(account);
+        logger.info("Successfully created account with ID: {} for user ID: {}", savedAccount.getId(), userId);
+        
+        return savedAccount;
     }
     
     /**
