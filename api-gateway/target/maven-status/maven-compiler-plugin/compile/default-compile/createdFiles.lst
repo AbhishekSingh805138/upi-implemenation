@@ -1,0 +1,6 @@
+com\upi\gateway\ApiGatewayApplication.class
+com\upi\gateway\filter\LoggingGlobalFilter.class
+com\upi\gateway\exception\GlobalErrorHandler$ErrorResponse.class
+com\upi\gateway\controller\FallbackController.class
+com\upi\gateway\exception\GlobalErrorHandler.class
+com\upi\gateway\config\GatewayConfig.class
