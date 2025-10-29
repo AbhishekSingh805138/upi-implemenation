@@ -2,9 +2,7 @@ package com.upi.gateway.controller;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
 import java.util.HashMap;
@@ -14,22 +12,22 @@ import java.util.Map;
 @RequestMapping("/fallback")
 public class FallbackController {
     
-    @GetMapping("/account-service")
+    @RequestMapping(value = "/account-service", method = {RequestMethod.GET, RequestMethod.POST, RequestMethod.PUT, RequestMethod.DELETE})
     public ResponseEntity<Map<String, Object>> accountServiceFallback() {
         return createFallbackResponse("Account Service is currently unavailable");
     }
     
-    @GetMapping("/transaction-service")
+    @RequestMapping(value = "/transaction-service", method = {RequestMethod.GET, RequestMethod.POST, RequestMethod.PUT, RequestMethod.DELETE})
     public ResponseEntity<Map<String, Object>> transactionServiceFallback() {
         return createFallbackResponse("Transaction Service is currently unavailable");
     }
     
-    @GetMapping("/user-service")
+    @RequestMapping(value = "/user-service", method = {RequestMethod.GET, RequestMethod.POST, RequestMethod.PUT, RequestMethod.DELETE})
     public ResponseEntity<Map<String, Object>> userServiceFallback() {
         return createFallbackResponse("User Service is currently unavailable");
     }
     
-    @GetMapping("/general")
+    @RequestMapping(value = "/general", method = {RequestMethod.GET, RequestMethod.POST, RequestMethod.PUT, RequestMethod.DELETE})
     public ResponseEntity<Map<String, Object>> generalFallback() {
         return createFallbackResponse("Service is temporarily unavailable");
     }

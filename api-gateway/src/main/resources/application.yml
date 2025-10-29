@@ -13,38 +13,23 @@ spring:
           lower-case-service-id: true
       
       routes:
-        # Account Service Routes with fallback
-        - id: account-service
-          uri: lb://account-service
-          predicates:
-            - Path=/api/accounts/**
-          filters:
-            - name: CircuitBreaker
-              args:
-                name: account-service-cb
-                fallbackUri: forward:/fallback/account-service
-        
-        # Transaction Service Routes with fallback
-        - id: transaction-service
-          uri: lb://transaction-service
-          predicates:
-            - Path=/api/transactions/**
-          filters:
-            - name: CircuitBreaker
-              args:
-                name: transaction-service-cb
-                fallbackUri: forward:/fallback/transaction-service
-        
-        # User Service Routes with fallback
+        # User Service Routes
         - id: user-service
           uri: lb://user-service
           predicates:
             - Path=/api/users/**
-          filters:
-            - name: CircuitBreaker
-              args:
-                name: user-service-cb
-                fallbackUri: forward:/fallback/user-service
+        
+        # Account Service Routes
+        - id: account-service
+          uri: lb://account-service
+          predicates:
+            - Path=/api/accounts/**
+        
+        # Transaction Service Routes
+        - id: transaction-service
+          uri: lb://transaction-service
+          predicates:
+            - Path=/api/transactions/**
 
       # Global CORS configuration
       globalcors:
@@ -59,16 +44,6 @@ spring:
               - OPTIONS
             allowedHeaders: "*"
             allowCredentials: false
-      
-      # Default filters for all routes
-      default-filters:
-        - name: Retry
-          args:
-            retries: 3
-            statuses: BAD_GATEWAY,INTERNAL_SERVER_ERROR
-            methods: GET,POST,PUT,DELETE
-        - AddRequestHeader=X-Gateway-Request-Id, ${random.uuid}
-        - AddResponseHeader=X-Gateway-Response-Time, ${T(java.lang.System).currentTimeMillis()}
 
 eureka:
   client:
