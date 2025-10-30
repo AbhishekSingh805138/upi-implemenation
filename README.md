@@ -12,7 +12,7 @@ A complete **Unified Payments Interface (UPI)** system built with **Spring Boot 
 
 This project implements a **production-ready UPI payment system** using microservices architecture, enabling users to:
 - Register and manage user profiles
-- Create and manage UPI accounts with unique UPI IDs
+- Create and manage UPI accounts with phone-based UPI IDs
 - Transfer money between accounts in real-time
 - View comprehensive transaction history
 - Monitor account balances with precision
@@ -147,7 +147,7 @@ ng serve
 
 ### **🏦 Account Service (Port 8082)**
 - **Purpose**: UPI account and balance management
-- **Features**: Account creation, balance operations, UPI ID generation
+- **Features**: Account creation, balance operations, phone-based UPI ID generation
 - **Integration**: Validates users via User Service
 
 ### **💸 Transaction Service (Port 8083)**
@@ -196,8 +196,14 @@ GET    /api/transactions/user/{upiId}/recent  # Get recent transactions
 
 ## 💡 **Key Features**
 
+### **📱 Phone-Based UPI IDs**
+- **Format**: `{phone_number}@upi` (e.g., `6203430305@upi`)
+- **Generation**: Automatically derived from user's registered phone number
+- **Uniqueness**: Handles duplicate phone numbers with numeric suffixes
+- **Validation**: Ensures 10-digit phone number format compliance
+
 ### **🔐 Data Integrity**
-- Unique constraints on usernames, emails, and UPI IDs
+- Unique constraints on usernames, emails, and phone-based UPI IDs
 - Foreign key relationships between services
 - Transaction atomicity with proper rollback mechanisms
 

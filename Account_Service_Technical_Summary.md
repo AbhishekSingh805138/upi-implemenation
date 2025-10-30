@@ -39,9 +39,10 @@ Account Entity:
 ```
 
 ### **3. UPI ID Generation**
-- **Format**: `{username}@upi`
-- **Example**: If username is "john", UPI ID becomes "john@upi"
+- **Format**: `{phone_number}@upi`
+- **Example**: If phone is "6203430305", UPI ID becomes "6203430305@upi"
 - **Uniqueness**: Each UPI ID is unique across the system
+- **Collision Handling**: If phone number already exists, adds numeric suffix (e.g., "62034303051@upi")
 
 ---
 
@@ -66,7 +67,8 @@ Flow:
 **Real Example**:
 ```
 User wants UPI account → Account Service → "Is user ID 5 valid?" → User Service
-User Service checks database → "Yes, user exists" → Account Service → Creates UPI account
+User Service confirms user exists → Account Service gets user's phone (6203430305)
+Account Service creates UPI account with ID "6203430305@upi"
 ```
 
 ### **2. Transaction Service → Account Service**
@@ -278,7 +280,7 @@ POST /api/accounts                         → Frontend uses this
 **"The Account Service is like the bank account manager in our UPI system. When someone wants to create a UPI account, it first checks with the User Service to confirm they're a valid customer. Once confirmed, it creates their digital wallet with a unique UPI ID like 'john@upi'. During money transfers, the Transaction Service uses the Account Service to check balances and update accounts - it's like the cashier that handles all the money movements."**
 
 **Technical Flow**:
-1. **User wants UPI account** → Account Service validates with User Service → Creates account
+1. **User wants UPI account** → Account Service validates with User Service → Gets phone number → Creates account with phone-based UPI ID
 2. **Money transfer initiated** → Transaction Service asks Account Service to move money
 3. **Account Service handles** → Balance checks, debits, credits with database precision
 4. **All operations logged** → Automatic timestamps and error handling

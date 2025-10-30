@@ -162,8 +162,8 @@ public class AccountService {
             return false;
         }
         
-        // Basic UPI ID format validation (user@bank)
-        if (!upiId.matches("^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+$")) {
+        // UPI ID format validation for phone-based IDs (10digits@upi or 10digits1@upi)
+        if (!upiId.matches("^[0-9]{10}[0-9]*@upi$")) {
             return false;
         }
         
@@ -172,26 +172,49 @@ public class AccountService {
     }
     
     /**
-     * Generate unique UPI ID for a user
+     * Generate unique UPI ID for a user based on phone number
      */
     private String generateUniqueUpiId(Long userId) {
-        String baseUpiId;
-        String upiId;
+        logger.debug("Generating UPI ID for user ID: {}", userId);
+        
+        // Get user details to fetch phone number
+        UserServiceClient.UserDetails userDetails = userServiceClient.getUserById(userId);
+        if (userDetails == null || userDetails.getPhone() == null) {
+            throw new IllegalArgumentException("Unable to fetch user phone number for UPI ID generation");
+        }
+        
+        String phoneNumber = userDetails.getPhone();
+        
+        // Remove any non-digit characters and country code prefix
+        String cleanPhone = phoneNumber.replaceAll("[^0-9]", "");
+        
+        // If phone starts with country code (like +91), remove it
+        if (cleanPhone.startsWith("91") && cleanPhone.length() > 10) {
+            cleanPhone = cleanPhone.substring(2);
+        }
+        
+        // Ensure we have a 10-digit phone number
+        if (cleanPhone.length() != 10) {
+            throw new IllegalArgumentException("Invalid phone number format for UPI ID generation: " + phoneNumber);
+        }
+        
+        String baseUpiId = cleanPhone;
+        String upiId = baseUpiId + "@upi";
         int attempts = 0;
         
-        do {
+        // Check if UPI ID already exists (in case of duplicate phone numbers)
+        while (accountRepository.existsByUpiId(upiId)) {
             if (attempts > 10) {
-                throw new RuntimeException("Unable to generate unique UPI ID after multiple attempts");
+                throw new RuntimeException("Unable to generate unique UPI ID after multiple attempts for phone: " + phoneNumber);
             }
             
-            // Generate UPI ID in format: user{userId}{random}@upi
-            int randomSuffix = 1000 + random.nextInt(9000); // 4-digit random number
-            baseUpiId = "user" + userId + randomSuffix;
-            upiId = baseUpiId + "@upi";
+            // If phone-based UPI ID exists, add a suffix
+            int suffix = 1 + attempts;
+            upiId = baseUpiId + suffix + "@upi";
             attempts++;
-            
-        } while (accountRepository.existsByUpiId(upiId));
+        }
         
+        logger.info("Generated UPI ID: {} for user ID: {} with phone: {}", upiId, userId, phoneNumber);
         return upiId;
     }
     

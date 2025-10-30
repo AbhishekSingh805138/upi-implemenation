@@ -62,14 +62,14 @@ Transaction Entity:
 
 **Money Transfer Flow (Step by Step)**:
 ```
-User Request: Transfer ₹500 from "john@upi" to "jane@upi"
+User Request: Transfer ₹500 from "6203430305@upi" to "9876543210@upi"
 
 Step 1: Transaction Service validates sender UPI ID via Account Service
 Step 2: Transaction Service validates receiver UPI ID via Account Service  
-Step 3: Transaction Service checks john@upi has ₹500+ balance
+Step 3: Transaction Service checks 6203430305@upi has ₹500+ balance
 Step 4: Transaction Service creates transaction record with status PENDING
-Step 5: Transaction Service debits ₹500 from john@upi account
-Step 6: Transaction Service credits ₹500 to jane@upi account
+Step 5: Transaction Service debits ₹500 from 6203430305@upi account
+Step 6: Transaction Service credits ₹500 to 9876543210@upi account
 Step 7: Transaction Service updates transaction status to COMPLETED
 Step 8: Returns transaction details to user
 ```
@@ -210,8 +210,8 @@ private String generateTransactionRef() {
 ```
 USER INITIATES TRANSFER:
 Frontend Request: {
-    "senderUpiId": "john@upi",
-    "receiverUpiId": "jane@upi", 
+    "senderUpiId": "6203430305@upi",
+    "receiverUpiId": "9876543210@upi", 
     "amount": 1000.00,
     "description": "Dinner payment"
 }
@@ -225,33 +225,33 @@ TRANSACTION SERVICE PROCESSING:
 
 2. VALIDATE SENDER UPI ID
    Transaction Service → Account Service
-   GET /api/accounts/validate/john@upi
+   GET /api/accounts/validate/6203430305@upi
    Response: true
 
 3. VALIDATE RECEIVER UPI ID  
    Transaction Service → Account Service
-   GET /api/accounts/validate/jane@upi
+   GET /api/accounts/validate/9876543210@upi
    Response: true
 
 4. CHECK SENDER BALANCE
    Transaction Service → Account Service
-   GET /api/accounts/upi/john@upi/balance
-   Response: {"balance": 5000.00, "upiId": "john@upi"}
+   GET /api/accounts/upi/6203430305@upi/balance
+   Response: {"balance": 5000.00, "upiId": "6203430305@upi"}
 
 5. VALIDATE SUFFICIENT BALANCE
    Check: 5000.00 >= 1000.00 ✓ (Sufficient)
 
 6. DEBIT SENDER ACCOUNT
    Transaction Service → Account Service
-   PUT /api/accounts/upi/john@upi/balance
+   PUT /api/accounts/upi/6203430305@upi/balance
    Body: {"amount": 1000.00, "operation": "DEBIT"}
-   Response: {"balance": 4000.00, "upiId": "john@upi"}
+   Response: {"balance": 4000.00, "upiId": "6203430305@upi"}
 
 7. CREDIT RECEIVER ACCOUNT
    Transaction Service → Account Service  
-   PUT /api/accounts/upi/jane@upi/balance
+   PUT /api/accounts/upi/9876543210@upi/balance
    Body: {"amount": 1000.00, "operation": "CREDIT"}
-   Response: {"balance": 3000.00, "upiId": "jane@upi"}
+   Response: {"balance": 3000.00, "upiId": "9876543210@upi"}
 
 8. UPDATE TRANSACTION STATUS
    - Status: COMPLETED
@@ -260,8 +260,8 @@ TRANSACTION SERVICE PROCESSING:
 9. RETURN RESPONSE TO USER
    Response: {
        "id": 123,
-       "senderUpiId": "john@upi",
-       "receiverUpiId": "jane@upi",
+       "senderUpiId": "6203430305@upi",
+       "receiverUpiId": "9876543210@upi",
        "amount": 1000.00,
        "status": "COMPLETED",
        "transactionRef": "TXN1698765432001234",
