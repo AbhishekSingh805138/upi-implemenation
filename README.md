@@ -318,11 +318,3 @@ upi-payment-system/
 
 ---
 
-## 🔗 **Related Documentation**
-
-- [Microservices Communication Architecture](docs/Microservices_Communication_Architecture.md)
-- [User Service Technical Summary](docs/User_Service_Technical_Summary.md)
-- [Account Service Technical Summary](docs/Account_Service_Technical_Summary.md)
-- [Transaction Service Technical Summary](docs/Transaction_Service_Technical_Summary.md)
-
----
