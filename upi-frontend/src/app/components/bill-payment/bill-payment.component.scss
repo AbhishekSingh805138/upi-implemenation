@@ -1,0 +1,638 @@
+// Bill Payment Component Styles
+
+.bill-payment-container {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+  padding-bottom: 3rem;
+}
+
+// Hero Header with dynamic gradients based on bill type
+.bill-header {
+  padding: 3rem 0 4rem;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  
+  // Default gradient (electricity)
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  
+  &::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    right: -10%;
+    width: 500px;
+    height: 500px;
+    background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+    border-radius: 50%;
+  }
+  
+  &::after {
+    content: '';
+    position: absolute;
+    bottom: -30%;
+    left: -5%;
+    width: 400px;
+    height: 400px;
+    background: radial-gradient(circle, rgba(255,255,255,0.08) 0%, transparent 70%);
+    border-radius: 50%;
+  }
+  
+  .container {
+    position: relative;
+    z-index: 1;
+  }
+  
+  h2 {
+    font-size: 2.2rem;
+    font-weight: 700;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+    
+    i {
+      font-size: 2.5rem;
+      vertical-align: middle;
+    }
+  }
+  
+  p {
+    font-size: 1.1rem;
+    margin-bottom: 0;
+  }
+  
+  .btn-link {
+    text-decoration: none;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    
+    &:hover {
+      transform: translateX(-5px);
+      text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.3);
+    }
+  }
+}
+
+// Insurance specific gradient (pink theme)
+.bill-payment-container:has([ng-reflect-bill-type="insurance"]) .bill-header,
+.bill-payment-container:has(form div[ng-reflect-ng-if="insurance"]) .bill-header {
+  background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+}
+
+// Credit card specific gradient (blue theme)
+.bill-payment-container:has([ng-reflect-bill-type="credit-card"]) .bill-header,
+.bill-payment-container:has(form div[ng-reflect-ng-if="credit-card"]) .bill-header {
+  background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+}
+
+// Main card container
+.bill-card {
+  background: white;
+  border-radius: 24px;
+  padding: 2.5rem;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
+  transition: all 0.3s ease;
+  
+  &:hover {
+    box-shadow: 0 15px 50px rgba(0, 0, 0, 0.12);
+  }
+}
+
+// Success message styling
+.success-message {
+  text-align: center;
+  padding: 2rem;
+  animation: slideInUp 0.5s ease;
+  
+  .success-icon {
+    width: 100px;
+    height: 100px;
+    background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 1.5rem;
+    animation: scaleIn 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    box-shadow: 0 10px 30px rgba(17, 153, 142, 0.3);
+    
+    i {
+      font-size: 3.5rem;
+      color: white;
+    }
+  }
+  
+  h4 {
+    color: #2d3748;
+    font-weight: 700;
+    font-size: 1.8rem;
+    margin-bottom: 1rem;
+  }
+  
+  p {
+    color: #718096;
+    font-size: 1.1rem;
+  }
+  
+  .transaction-ref {
+    background: #f7fafc;
+    padding: 1rem;
+    border-radius: 12px;
+    margin: 1rem 0;
+    border: 2px dashed #cbd5e0;
+    
+    small {
+      color: #4a5568;
+      font-size: 0.95rem;
+      
+      strong {
+        color: #2d3748;
+        font-family: 'Courier New', monospace;
+      }
+    }
+  }
+  
+  .btn {
+    padding: 0.75rem 2rem;
+    border-radius: 12px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+    }
+  }
+}
+
+// Alert styling
+.alert-modern {
+  border-radius: 15px;
+  border: none;
+  padding: 1.25rem 1.5rem;
+  display: flex;
+  align-items: center;
+  box-shadow: 0 4px 15px rgba(220, 53, 69, 0.2);
+  animation: slideInDown 0.4s ease;
+  
+  i {
+    font-size: 1.3rem;
+  }
+  
+  .btn-close {
+    margin-left: auto;
+  }
+}
+
+// Form styling
+.bill-form {
+  animation: fadeIn 0.5s ease;
+}
+
+.form-group-modern {
+  margin-bottom: 1.5rem;
+}
+
+.form-label-modern {
+  display: block;
+  font-weight: 600;
+  color: #2d3748;
+  margin-bottom: 0.75rem;
+  font-size: 1rem;
+  
+  i {
+    color: #667eea;
+    font-size: 1.1rem;
+  }
+}
+
+.form-control-modern {
+  width: 100%;
+  padding: 1rem 1.25rem;
+  border: 2px solid #e2e8f0;
+  border-radius: 12px;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+  background: #f7fafc;
+  
+  &:focus {
+    outline: none;
+    border-color: #667eea;
+    background: white;
+    box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
+    transform: translateY(-2px);
+  }
+  
+  &::placeholder {
+    color: #a0aec0;
+  }
+  
+  &:disabled,
+  &[readonly] {
+    background: #edf2f7;
+    cursor: not-allowed;
+  }
+}
+
+select.form-control-modern {
+  cursor: pointer;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23667eea' d='M6 9L1 4h10z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 1rem center;
+  padding-right: 3rem;
+}
+
+// UPI ID display with badge
+.upi-id-display {
+  position: relative;
+  
+  .upi-badge {
+    position: absolute;
+    right: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+    color: white;
+    padding: 0.4rem 0.8rem;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    box-shadow: 0 4px 10px rgba(17, 153, 142, 0.3);
+    
+    i {
+      font-size: 0.9rem;
+    }
+  }
+  
+  input {
+    padding-right: 8rem;
+  }
+}
+
+// Fetch bill button
+.btn-fetch-bill {
+  width: 100%;
+  padding: 1rem 1.5rem;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  border-radius: 12px;
+  font-weight: 600;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+  
+  &:hover:not(:disabled) {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+  }
+  
+  &:active:not(:disabled) {
+    transform: translateY(-1px);
+  }
+  
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+  
+  .spinner-border {
+    width: 1rem;
+    height: 1rem;
+    border-width: 2px;
+  }
+}
+
+// Bill details card
+.bill-details-card {
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  animation: slideInUp 0.5s ease;
+  border: 2px solid #e2e8f0;
+}
+
+.bill-details-header {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  padding: 1.25rem 1.5rem;
+  font-weight: 700;
+  font-size: 1.1rem;
+  
+  i {
+    font-size: 1.2rem;
+  }
+}
+
+.bill-details-body {
+  background: white;
+  padding: 1.5rem;
+}
+
+.detail-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 0;
+  border-bottom: 1px solid #e2e8f0;
+  
+  &:last-child {
+    border-bottom: none;
+  }
+}
+
+.detail-label {
+  color: #718096;
+  font-weight: 500;
+  font-size: 0.95rem;
+}
+
+.detail-value {
+  color: #2d3748;
+  font-weight: 600;
+  font-size: 1rem;
+  
+  &.amount {
+    color: #667eea;
+    font-size: 1.3rem;
+    font-weight: 700;
+  }
+}
+
+// Pay button
+.btn-pay-modern {
+  width: 100%;
+  padding: 1.25rem 1.5rem;
+  background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+  color: white;
+  border: none;
+  border-radius: 12px;
+  font-weight: 700;
+  font-size: 1.1rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 6px 20px rgba(17, 153, 142, 0.3);
+  
+  &:hover:not(:disabled) {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 30px rgba(17, 153, 142, 0.4);
+  }
+  
+  &:active:not(:disabled) {
+    transform: translateY(-1px);
+  }
+  
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+  
+  i {
+    font-size: 1.2rem;
+  }
+  
+  .spinner-border {
+    width: 1.2rem;
+    height: 1.2rem;
+    border-width: 2px;
+  }
+}
+
+// Cancel button
+.btn-cancel-modern {
+  width: 100%;
+  padding: 1rem 1.5rem;
+  background: white;
+  color: #718096;
+  border: 2px solid #e2e8f0;
+  border-radius: 12px;
+  font-weight: 600;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  
+  &:hover {
+    background: #f7fafc;
+    border-color: #cbd5e0;
+    color: #4a5568;
+    transform: translateY(-2px);
+  }
+  
+  i {
+    font-size: 1.1rem;
+  }
+}
+
+// Animations
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.5);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+// Responsive design
+@media (max-width: 768px) {
+  .bill-header {
+    padding: 2rem 0 3rem;
+    
+    h2 {
+      font-size: 1.6rem;
+      
+      i {
+        font-size: 1.8rem;
+      }
+    }
+    
+    p {
+      font-size: 1rem;
+    }
+  }
+  
+  .bill-card {
+    padding: 1.5rem;
+    border-radius: 20px;
+  }
+  
+  .success-message {
+    padding: 1.5rem;
+    
+    .success-icon {
+      width: 80px;
+      height: 80px;
+      
+      i {
+        font-size: 2.5rem;
+      }
+    }
+    
+    h4 {
+      font-size: 1.5rem;
+    }
+    
+    .btn {
+      width: 100%;
+      margin-bottom: 0.5rem;
+      
+      &:last-child {
+        margin-bottom: 0;
+      }
+    }
+  }
+  
+  .form-control-modern {
+    padding: 0.875rem 1rem;
+    font-size: 0.95rem;
+  }
+  
+  .btn-pay-modern,
+  .btn-fetch-bill {
+    padding: 1rem 1.25rem;
+    font-size: 1rem;
+  }
+  
+  .upi-id-display {
+    .upi-badge {
+      position: static;
+      transform: none;
+      display: block;
+      margin-top: 0.5rem;
+      text-align: center;
+    }
+    
+    input {
+      padding-right: 1.25rem;
+    }
+  }
+}
+
+@media (max-width: 576px) {
+  .bill-header {
+    h2 {
+      font-size: 1.4rem;
+      
+      i {
+        font-size: 1.5rem;
+      }
+    }
+  }
+  
+  .bill-card {
+    padding: 1.25rem;
+  }
+  
+  .detail-row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+  
+  .detail-value.amount {
+    font-size: 1.5rem;
+  }
+}
+
+// Loading spinner
+.spinner-border {
+  display: inline-block;
+  width: 1rem;
+  height: 1rem;
+  vertical-align: text-bottom;
+  border: 0.2em solid currentColor;
+  border-right-color: transparent;
+  border-radius: 50%;
+  animation: spinner-border 0.75s linear infinite;
+}
+
+@keyframes spinner-border {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+// Insurance specific styling overrides
+.bill-payment-container:has(form div[ng-reflect-ng-if="insurance"]) {
+  .btn-fetch-bill,
+  .bill-details-header {
+    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    box-shadow: 0 4px 15px rgba(240, 147, 251, 0.3);
+    
+    &:hover:not(:disabled) {
+      box-shadow: 0 8px 25px rgba(240, 147, 251, 0.4);
+    }
+  }
+  
+  .form-label-modern i {
+    color: #f093fb;
+  }
+  
+  .form-control-modern:focus {
+    border-color: #f093fb;
+    box-shadow: 0 0 0 4px rgba(240, 147, 251, 0.1);
+  }
+  
+  .detail-value.amount {
+    color: #f5576c;
+  }
+}
+
+// Credit card specific styling overrides
+.bill-payment-container:has(form div[ng-reflect-ng-if="credit-card"]) {
+  .btn-fetch-bill,
+  .bill-details-header {
+    background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+    box-shadow: 0 4px 15px rgba(79, 172, 254, 0.3);
+    
+    &:hover:not(:disabled) {
+      box-shadow: 0 8px 25px rgba(79, 172, 254, 0.4);
+    }
+  }
+  
+  .form-label-modern i {
+    color: #4facfe;
+  }
+  
+  .form-control-modern:focus {
+    border-color: #4facfe;
+    box-shadow: 0 0 0 4px rgba(79, 172, 254, 0.1);
+  }
+  
+  .detail-value.amount {
+    color: #00f2fe;
+  }
+}

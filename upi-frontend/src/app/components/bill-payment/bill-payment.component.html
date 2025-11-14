@@ -1,0 +1,245 @@
+<div class="bill-payment-container">
+  <!-- Hero Header -->
+  <div class="bill-header">
+    <div class="container">
+      <button class="btn btn-link text-white mb-3" routerLink="/utilities">
+        <i class="bi bi-arrow-left me-2"></i> Back to Utilities
+      </button>
+      <h2 class="text-white mb-2">
+        <i class="bi {{ getIcon() }} me-3"></i>
+        {{ getTitle() }}
+      </h2>
+      <p class="text-white-50">{{ getSubtitle() }}</p>
+    </div>
+  </div>
+
+  <div class="container py-4">
+    <div class="row">
+      <div class="col-lg-8 mx-auto">
+        <div class="bill-card">
+          <!-- Success Message -->
+          <div *ngIf="success" class="success-message">
+            <div class="success-icon">
+              <i class="bi bi-check-circle-fill"></i>
+            </div>
+            <h4>Payment Successful!</h4>
+            <p class="mb-2">{{ success.message }}</p>
+            <div class="transaction-ref">
+              <small>Transaction Ref: <strong>{{ success.transactionRef }}</strong></small>
+            </div>
+            <div class="mt-4">
+              <button class="btn btn-primary me-2" routerLink="/utilities/history">
+                <i class="bi bi-receipt me-2"></i> View Receipt
+              </button>
+              <button class="btn btn-outline-primary" (click)="success = null">
+                <i class="bi bi-plus-circle me-2"></i> New Payment
+              </button>
+            </div>
+          </div>
+
+          <!-- Error Message -->
+          <div *ngIf="error" class="alert alert-danger alert-modern" role="alert">
+            <i class="bi bi-exclamation-triangle-fill me-2"></i>
+            {{ error }}
+            <button type="button" class="btn-close" (click)="error = null"></button>
+          </div>
+
+          <!-- Bill Payment Form -->
+          <form (ngSubmit)="processBillPayment()" *ngIf="!success" class="bill-form">
+            
+            <!-- Electricity Bill Fields -->
+            <div *ngIf="billType === 'electricity'">
+              <div class="form-group-modern mb-4">
+                <label class="form-label-modern">
+                  <i class="bi bi-building me-2"></i> Electricity Provider
+                </label>
+                <select class="form-control-modern" [(ngModel)]="providerCode" name="providerCode" required>
+                  <option value="">Select provider...</option>
+                  <option value="BESCOM">BESCOM (Bangalore)</option>
+                  <option value="MSEDCL">MSEDCL (Maharashtra)</option>
+                  <option value="TSNPDCL">TSNPDCL (Telangana)</option>
+                  <option value="APSPDCL">APSPDCL (Andhra Pradesh)</option>
+                </select>
+              </div>
+
+              <div class="form-group-modern mb-4">
+                <label class="form-label-modern">
+                  <i class="bi bi-person-badge me-2"></i> Consumer Number
+                </label>
+                <input
+                  type="text"
+                  class="form-control-modern"
+                  [(ngModel)]="consumerNumber"
+                  name="consumerNumber"
+                  placeholder="Enter your consumer number"
+                  required
+                >
+              </div>
+
+              <div class="mb-4">
+                <button
+                  type="button"
+                  class="btn-fetch-bill"
+                  (click)="fetchBill()"
+                  [disabled]="fetchingBill || !providerCode || !consumerNumber"
+                >
+                  <span *ngIf="!fetchingBill">
+                    <i class="bi bi-search me-2"></i>
+                    Fetch Bill Details
+                  </span>
+                  <span *ngIf="fetchingBill">
+                    <span class="spinner-border spinner-border-sm me-2"></span>
+                    Fetching...
+                  </span>
+                </button>
+              </div>
+
+              <!-- Bill Details Card -->
+              <div *ngIf="billDetails" class="bill-details-card mb-4">
+                <div class="bill-details-header">
+                  <i class="bi bi-file-earmark-text me-2"></i>
+                  Bill Details
+                </div>
+                <div class="bill-details-body">
+                  <div class="detail-row">
+                    <span class="detail-label">Consumer Name</span>
+                    <span class="detail-value">{{ billDetails.consumerName }}</span>
+                  </div>
+                  <div class="detail-row">
+                    <span class="detail-label">Amount Due</span>
+                    <span class="detail-value amount">₹{{ billDetails.amountDue }}</span>
+                  </div>
+                  <div class="detail-row">
+                    <span class="detail-label">Due Date</span>
+                    <span class="detail-value">{{ billDetails.dueDate }}</span>
+                  </div>
+                  <div class="detail-row">
+                    <span class="detail-label">Billing Period</span>
+                    <span class="detail-value">{{ billDetails.billingPeriod }}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Credit Card Fields -->
+            <div *ngIf="billType === 'credit-card'">
+              <div class="form-group-modern mb-4">
+                <label class="form-label-modern">
+                  <i class="bi bi-bank me-2"></i> Card Issuer
+                </label>
+                <select class="form-control-modern" [(ngModel)]="issuerCode" name="issuerCode" required>
+                  <option value="">Select card issuer...</option>
+                  <option *ngFor="let provider of providers" [value]="provider.name">
+                    {{ provider.displayName }}
+                  </option>
+                </select>
+              </div>
+
+              <div class="form-group-modern mb-4">
+                <label class="form-label-modern">
+                  <i class="bi bi-credit-card me-2"></i> Card Last 4 Digits
+                </label>
+                <input
+                  type="text"
+                  class="form-control-modern"
+                  [(ngModel)]="cardLast4Digits"
+                  name="cardLast4Digits"
+                  placeholder="Enter last 4 digits"
+                  maxlength="4"
+                  required
+                >
+              </div>
+            </div>
+
+            <!-- Insurance Fields -->
+            <div *ngIf="billType === 'insurance'">
+              <div class="form-group-modern mb-4">
+                <label class="form-label-modern">
+                  <i class="bi bi-building me-2"></i> Insurance Provider
+                </label>
+                <select class="form-control-modern" [(ngModel)]="providerCode" name="providerCode" required>
+                  <option value="">Select provider...</option>
+                  <option value="LIC">LIC of India</option>
+                  <option value="HDFC_LIFE">HDFC Life</option>
+                  <option value="ICICI_PRU">ICICI Prudential</option>
+                  <option value="SBI_LIFE">SBI Life</option>
+                </select>
+              </div>
+
+              <div class="form-group-modern mb-4">
+                <label class="form-label-modern">
+                  <i class="bi bi-file-text me-2"></i> Policy Number
+                </label>
+                <input
+                  type="text"
+                  class="form-control-modern"
+                  [(ngModel)]="policyNumber"
+                  name="policyNumber"
+                  placeholder="Enter your policy number"
+                  required
+                >
+              </div>
+            </div>
+
+            <!-- Amount Field -->
+            <div class="form-group-modern mb-4">
+              <label class="form-label-modern">
+                <i class="bi bi-currency-rupee me-2"></i> Amount
+              </label>
+              <input
+                type="number"
+                class="form-control-modern"
+                [(ngModel)]="amount"
+                name="amount"
+                placeholder="Enter amount"
+                min="1"
+                required
+              >
+            </div>
+
+            <!-- UPI ID (Auto-filled) -->
+            <div class="form-group-modern mb-4">
+              <label class="form-label-modern">
+                <i class="bi bi-wallet2 me-2"></i> UPI ID
+              </label>
+              <div class="upi-id-display">
+                <input
+                  type="text"
+                  class="form-control-modern"
+                  [(ngModel)]="upiId"
+                  name="upiId"
+                  [placeholder]="upiId ? upiId : 'Loading UPI ID...'"
+                  readonly
+                >
+                <span class="upi-badge" *ngIf="upiId">
+                  <i class="bi bi-check-circle-fill me-1"></i> Verified
+                </span>
+              </div>
+            </div>
+
+            <!-- Submit Buttons -->
+            <div class="d-grid gap-2">
+              <button
+                type="submit"
+                class="btn-pay-modern"
+                [disabled]="processing || loading"
+              >
+                <span *ngIf="!processing">
+                  <i class="bi bi-check-circle-fill me-2"></i>
+                  Pay Now
+                </span>
+                <span *ngIf="processing">
+                  <span class="spinner-border spinner-border-sm me-2"></span>
+                  Processing...
+                </span>
+              </button>
+              <button type="button" class="btn-cancel-modern" routerLink="/utilities">
+                <i class="bi bi-x-circle me-2"></i> Cancel
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

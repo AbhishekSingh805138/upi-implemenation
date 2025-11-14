@@ -1,0 +1,59 @@
+server:
+  port: 8084
+
+spring:
+  application:
+    name: utility-service
+  
+  datasource:
+    url: jdbc:h2:mem:utilitydb
+    driver-class-name: org.h2.Driver
+    username: sa
+    password: password
+  
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+  
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka/
+    fetch-registry: true
+    register-with-eureka: true
+  instance:
+    prefer-ip-address: true
+    lease-renewal-interval-in-seconds: 30
+    lease-expiration-duration-in-seconds: 90
+
+# Service Dependencies Configuration
+account-service:
+  base-url: http://account-service
+  timeout: 5000
+  max-retries: 3
+
+transaction-service:
+  base-url: http://transaction-service
+  timeout: 5000
+  max-retries: 2
+
+# Provider Gateway Configuration
+provider-gateway:
+  timeout: 10000
+  max-retries: 2
+  retry-delay: 2000
+  mock-mode: true  # Use mock providers for development
+
+logging:
+  level:
+    com.upi.utility: DEBUG
+    org.springframework.web: INFO

@@ -1,0 +1,182 @@
+<div class="mobile-recharge-container">
+  <!-- Hero Header -->
+  <div class="recharge-header">
+    <div class="container">
+      <button class="btn btn-link text-white mb-3" routerLink="/utilities">
+        <i class="bi bi-arrow-left me-2"></i> Back to Utilities
+      </button>
+      <h2 class="text-white mb-2">
+        <i class="{{ pageIcon }} me-3"></i>
+        {{ pageTitle }}
+      </h2>
+      <p class="text-white-50">{{ isDTH ? 'Instant DTH recharge with exciting offers' : 'Instant mobile recharge with exciting offers' }}</p>
+    </div>
+  </div>
+
+  <div class="container py-4">
+    <div class="row">
+      <div class="col-lg-8 mx-auto">
+        <div class="recharge-card">
+          <!-- Success Message -->
+          <div *ngIf="success" class="success-message">
+            <div class="success-icon">
+              <i class="bi bi-check-circle-fill"></i>
+            </div>
+            <h4>Recharge Successful!</h4>
+            <p class="mb-2">{{ success.message }}</p>
+            <div class="transaction-ref">
+              <small>Transaction Ref: <strong>{{ success.transactionRef }}</strong></small>
+            </div>
+            <div class="mt-4">
+              <button class="btn btn-primary me-2" (click)="viewReceipt()">
+                <i class="bi bi-receipt me-2"></i> View Receipt
+              </button>
+              <button class="btn btn-outline-primary" (click)="success = null">
+                <i class="bi bi-plus-circle me-2"></i> New Recharge
+              </button>
+            </div>
+          </div>
+
+          <!-- Error Message -->
+          <div *ngIf="error" class="alert alert-danger alert-modern" role="alert">
+            <i class="bi bi-exclamation-triangle-fill me-2"></i>
+            {{ error }}
+            <button type="button" class="btn-close" (click)="error = null"></button>
+          </div>
+
+          <!-- Recharge Form -->
+          <form (ngSubmit)="processRecharge()" *ngIf="!success" class="recharge-form">
+            <!-- Mobile Number / Subscriber ID -->
+            <div class="form-group-modern mb-4">
+              <label for="mobileNumber" class="form-label-modern">
+                <i class="{{ isDTH ? 'bi-tv' : 'bi-phone' }} me-2"></i> {{ numberLabel }}
+              </label>
+              <input
+                type="tel"
+                class="form-control-modern"
+                id="mobileNumber"
+                [(ngModel)]="mobileNumber"
+                name="mobileNumber"
+                [placeholder]="numberPlaceholder"
+                [maxlength]="isDTH ? 20 : 10"
+                required
+              >
+            </div>
+
+            <!-- Operator Selection -->
+            <div class="form-group-modern mb-4">
+              <label for="operator" class="form-label-modern">
+                <i class="bi bi-sim me-2"></i> Select Operator
+              </label>
+              <select
+                class="form-control-modern"
+                id="operator"
+                [(ngModel)]="selectedOperator"
+                name="operator"
+                (change)="onOperatorChange()"
+                required
+              >
+                <option value="">Choose operator...</option>
+                <option *ngFor="let operator of operators" [value]="operator.name">
+                  {{ operator.displayName }}
+                </option>
+              </select>
+            </div>
+
+            <!-- Loading Plans -->
+            <div *ngIf="loadingPlans" class="loading-plans">
+              <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Loading plans...</span>
+              </div>
+              <p class="mt-2">Loading plans...</p>
+            </div>
+
+            <!-- Recharge Plans -->
+            <div *ngIf="plans.length > 0 && !loadingPlans" class="mb-4">
+              <label class="form-label-modern mb-3">
+                <i class="bi bi-grid-3x3-gap me-2"></i> Select Plan
+              </label>
+              <div class="plans-grid">
+                <div class="plan-card-modern" *ngFor="let plan of plans"
+                     [class.selected]="selectedPlan?.id === plan.id"
+                     (click)="selectPlan(plan)">
+                  <div class="plan-amount">₹{{ plan.amount }}</div>
+                  <div class="plan-name">{{ plan.planName }}</div>
+                  <div class="plan-validity">
+                    <i class="bi bi-calendar-check me-1"></i>
+                    {{ plan.validityDays }} days
+                  </div>
+                  <div class="plan-check" *ngIf="selectedPlan?.id === plan.id">
+                    <i class="bi bi-check-circle-fill"></i>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Custom Amount -->
+            <div class="form-group-modern mb-4">
+              <label for="customAmount" class="form-label-modern">
+                <i class="bi bi-currency-rupee me-2"></i> Or Enter Custom Amount
+              </label>
+              <input
+                type="number"
+                class="form-control-modern"
+                id="customAmount"
+                [(ngModel)]="customAmount"
+                name="customAmount"
+                placeholder="Enter amount (Min ₹10)"
+                min="10"
+                (input)="selectedPlan = null"
+              >
+            </div>
+
+            <!-- UPI ID (Auto-filled) -->
+            <div class="form-group-modern mb-4">
+              <label for="upiId" class="form-label-modern">
+                <i class="bi bi-wallet2 me-2"></i> UPI ID
+              </label>
+              <div class="upi-id-display">
+                <input
+                  type="text"
+                  class="form-control-modern"
+                  id="upiId"
+                  [(ngModel)]="upiId"
+                  name="upiId"
+                  [placeholder]="upiId ? upiId : 'Loading UPI ID...'"
+                  readonly
+                >
+                <span class="upi-badge" *ngIf="upiId">
+                  <i class="bi bi-check-circle-fill me-1"></i> Verified
+                </span>
+                <span class="upi-loading" *ngIf="!upiId">
+                  <span class="spinner-border spinner-border-sm me-1"></span> Loading...
+                </span>
+              </div>
+            </div>
+
+            <!-- Submit Button -->
+            <div class="d-grid gap-2">
+              <button
+                type="submit"
+                class="btn-recharge-modern"
+                [disabled]="processing || loading"
+              >
+                <span *ngIf="!processing">
+                  <i class="bi bi-lightning-charge-fill me-2"></i>
+                  Recharge Now
+                </span>
+                <span *ngIf="processing">
+                  <span class="spinner-border spinner-border-sm me-2" role="status"></span>
+                  Processing...
+                </span>
+              </button>
+              <button type="button" class="btn-cancel-modern" routerLink="/utilities">
+                <i class="bi bi-x-circle me-2"></i> Cancel
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,280 @@
+<div class="payment-history-container">
+  <!-- Hero Header -->
+  <div class="history-header">
+    <div class="container">
+      <h2 class="text-white mb-2">
+        <i class="bi bi-clock-history me-3"></i>
+        Payment History
+      </h2>
+      <p class="text-white-50">Track all your utility payments</p>
+    </div>
+  </div>
+
+  <div class="container py-4">
+    <!-- Filters Card -->
+    <div class="filters-card mb-4">
+      <div class="filters-header">
+        <i class="bi bi-funnel me-2"></i>
+        <span>Filters</span>
+      </div>
+      <div class="filters-body">
+        <div class="row g-3">
+          <div class="col-md-4">
+            <label class="filter-label">
+              <i class="bi bi-grid-3x3-gap me-2"></i>
+              Category
+            </label>
+            <select
+              class="form-control-modern"
+              [(ngModel)]="selectedCategory"
+              (change)="filterByCategory()"
+            >
+              <option value="">All Categories</option>
+              <option *ngFor="let category of getUniqueCategories()" [value]="category">
+                {{ category }}
+              </option>
+            </select>
+          </div>
+          <div class="col-md-3">
+            <label class="filter-label">
+              <i class="bi bi-calendar-event me-2"></i>
+              Start Date
+            </label>
+            <input
+              type="date"
+              class="form-control-modern"
+              [(ngModel)]="startDate"
+            >
+          </div>
+          <div class="col-md-3">
+            <label class="filter-label">
+              <i class="bi bi-calendar-check me-2"></i>
+              End Date
+            </label>
+            <input
+              type="date"
+              class="form-control-modern"
+              [(ngModel)]="endDate"
+            >
+          </div>
+          <div class="col-md-2 d-flex align-items-end gap-2">
+            <button class="btn-filter-apply" (click)="filterByDateRange()">
+              <i class="bi bi-check-circle me-1"></i>
+              Apply
+            </button>
+            <button class="btn-filter-clear" (click)="clearFilters()">
+              <i class="bi bi-x-circle"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Loading State -->
+    <div *ngIf="loading" class="loading-state">
+      <div class="spinner-modern"></div>
+      <p class="mt-3">Loading payment history...</p>
+    </div>
+
+    <!-- Error State -->
+    <div *ngIf="error && !loading" class="error-state">
+      <i class="bi bi-exclamation-triangle-fill"></i>
+      <p>{{ error }}</p>
+      <button class="btn-retry" (click)="loadPaymentHistory()">
+        <i class="bi bi-arrow-clockwise me-2"></i>
+        Retry
+      </button>
+    </div>
+
+    <!-- Empty State -->
+    <div *ngIf="!loading && !error && filteredPayments.length === 0" class="empty-state">
+      <div class="empty-icon">
+        <i class="bi bi-inbox"></i>
+      </div>
+      <h4>No Payments Found</h4>
+      <p>You haven't made any utility payments yet</p>
+      <button class="btn-primary-modern" routerLink="/utilities">
+        <i class="bi bi-plus-circle me-2"></i>
+        Make a Payment
+      </button>
+    </div>
+
+    <!-- Payment History Cards -->
+    <div *ngIf="!loading && !error && filteredPayments.length > 0" class="payments-grid">
+      <div class="payment-card" *ngFor="let payment of filteredPayments">
+        <div class="payment-card-header">
+          <div class="payment-icon" [ngClass]="getCategoryIconClass(payment.categoryName)">
+            <i [class]="getCategoryIcon(payment.categoryName)"></i>
+          </div>
+          <div class="payment-info">
+            <h5 class="payment-provider">{{ payment.providerName }}</h5>
+            <p class="payment-category">{{ payment.categoryName }}</p>
+          </div>
+          <div class="payment-status">
+            <span [class]="getStatusBadgeClass(payment.paymentStatus)">
+              <i [class]="getStatusIcon(payment.paymentStatus)"></i>
+              {{ payment.paymentStatus }}
+            </span>
+          </div>
+        </div>
+
+        <div class="payment-card-body">
+          <div class="payment-detail">
+            <span class="detail-label">
+              <i class="bi bi-hash me-1"></i>
+              Account
+            </span>
+            <span class="detail-value">{{ payment.accountIdentifier }}</span>
+          </div>
+          <div class="payment-detail">
+            <span class="detail-label">
+              <i class="bi bi-calendar3 me-1"></i>
+              Date
+            </span>
+            <span class="detail-value">{{ payment.timestamp | date:'MMM d, y' }}</span>
+          </div>
+          <div class="payment-detail">
+            <span class="detail-label">
+              <i class="bi bi-clock me-1"></i>
+              Time
+            </span>
+            <span class="detail-value">{{ payment.timestamp | date:'h:mm a' }}</span>
+          </div>
+          <div class="payment-detail">
+            <span class="detail-label">
+              <i class="bi bi-receipt me-1"></i>
+              Transaction ID
+            </span>
+            <span class="detail-value transaction-ref">{{ payment.transactionRef }}</span>
+          </div>
+        </div>
+
+        <div class="payment-card-footer">
+          <div class="payment-amount">
+            <span class="amount-label">Amount Paid</span>
+            <span class="amount-value">₹{{ payment.amount }}</span>
+          </div>
+          <div class="payment-actions">
+            <button
+              class="btn-action-view"
+              (click)="viewDetails(payment)"
+              title="View Details"
+            >
+              <i class="bi bi-eye-fill"></i>
+            </button>
+            <button
+              class="btn-action-download"
+              (click)="downloadReceipt(payment.id)"
+              title="Download Receipt"
+            >
+              <i class="bi bi-download"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Payment Details Modal -->
+<div class="modal-overlay" *ngIf="selectedPayment" (click)="selectedPayment = null">
+  <div class="modal-modern" (click)="$event.stopPropagation()">
+    <div class="modal-header-modern">
+      <h3>
+        <i class="bi bi-receipt-cutoff me-2"></i>
+        Payment Details
+      </h3>
+      <button class="btn-close-modern" (click)="selectedPayment = null">
+        <i class="bi bi-x-lg"></i>
+      </button>
+    </div>
+
+    <div class="modal-body-modern">
+      <div class="detail-row">
+        <span class="detail-label-modal">
+          <i class="bi bi-receipt me-2"></i>
+          Transaction Reference
+        </span>
+        <span class="detail-value-modal">{{ selectedPayment.transactionRef }}</span>
+      </div>
+
+      <div class="detail-row">
+        <span class="detail-label-modal">
+          <i class="bi bi-building me-2"></i>
+          Provider Reference
+        </span>
+        <span class="detail-value-modal">{{ selectedPayment.providerTransactionRef || 'N/A' }}</span>
+      </div>
+
+      <div class="detail-row">
+        <span class="detail-label-modal">
+          <i class="bi bi-grid-3x3-gap me-2"></i>
+          Category
+        </span>
+        <span class="detail-value-modal">{{ selectedPayment.categoryName }}</span>
+      </div>
+
+      <div class="detail-row">
+        <span class="detail-label-modal">
+          <i class="bi bi-shop me-2"></i>
+          Provider
+        </span>
+        <span class="detail-value-modal">{{ selectedPayment.providerName }}</span>
+      </div>
+
+      <div class="detail-row">
+        <span class="detail-label-modal">
+          <i class="bi bi-hash me-2"></i>
+          Account Identifier
+        </span>
+        <span class="detail-value-modal">{{ selectedPayment.accountIdentifier }}</span>
+      </div>
+
+      <div class="detail-row">
+        <span class="detail-label-modal">
+          <i class="bi bi-currency-rupee me-2"></i>
+          Amount
+        </span>
+        <span class="detail-value-modal amount-highlight">₹{{ selectedPayment.amount }}</span>
+      </div>
+
+      <div class="detail-row">
+        <span class="detail-label-modal">
+          <i class="bi bi-check-circle me-2"></i>
+          Status
+        </span>
+        <span [class]="getStatusBadgeClass(selectedPayment.paymentStatus)">
+          <i [class]="getStatusIcon(selectedPayment.paymentStatus)"></i>
+          {{ selectedPayment.paymentStatus }}
+        </span>
+      </div>
+
+      <div class="detail-row">
+        <span class="detail-label-modal">
+          <i class="bi bi-calendar-event me-2"></i>
+          Date & Time
+        </span>
+        <span class="detail-value-modal">{{ selectedPayment.timestamp | date:'medium' }}</span>
+      </div>
+
+      <div class="detail-row">
+        <span class="detail-label-modal">
+          <i class="bi bi-wallet2 me-2"></i>
+          UPI ID
+        </span>
+        <span class="detail-value-modal">{{ selectedPayment.upiId }}</span>
+      </div>
+    </div>
+
+    <div class="modal-footer-modern">
+      <button class="btn-secondary-modern" (click)="selectedPayment = null">
+        <i class="bi bi-x-circle me-2"></i>
+        Close
+      </button>
+      <button class="btn-primary-modern" (click)="downloadReceipt(selectedPayment.id)">
+        <i class="bi bi-download me-2"></i>
+        Download Receipt
+      </button>
+    </div>
+  </div>
+</div>

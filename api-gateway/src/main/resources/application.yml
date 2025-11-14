@@ -30,6 +30,12 @@ spring:
           uri: lb://transaction-service
           predicates:
             - Path=/api/transactions/**
+        
+        # Utility Service Routes
+        - id: utility-service
+          uri: lb://utility-service
+          predicates:
+            - Path=/api/utilities/**,/api/v1/utility/**
 
       # Global CORS configuration
       globalcors:
